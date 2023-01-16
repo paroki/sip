@@ -33,6 +33,10 @@ FROM deps as dev
 EXPOSE 3000
 ENV PORT 3000
 
+# Vite HMR port
+EXPOSE 3001
+ENV HMR_PORT 3001
+
 CMD ["sh", "-c", "pnpm install -r --offline; pnpm dev"]
 
 
@@ -57,9 +61,7 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder --link /srv/app/public ./public
 
 # Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --link --chown=nextjs:nodejs /srv/app/.next/standalone ./
-COPY --from=builder --link --chown=nextjs:nodejs /srv/app/.next/static ./.next/static
+COPY --from=builder --link --chown=nextjs:nodejs /srv/app/.nuxt ./
 
 USER nextjs
 
