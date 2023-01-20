@@ -1,5 +1,9 @@
 api_platform:
-    title: Hello API Platform
+    path_segment_name_generator: SIP\Core\SingularPathSegmentNameGenerator
+    mapping:
+        paths:
+            - '%kernel.project_dir%/src/Security/Entity'
+    title: Sistim Informasi Paroki
     version: 1.0.0
     # Mercure integration, remove if unwanted
     mercure: ~

@@ -14,9 +14,14 @@ services:
     environment:
       # See https://xdebug.org/docs/all_settings#mode 
       XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+      GID: ${GID:-1000}
+      UID: ${UID:-1000}
     extra_hosts:
       # Ensure that host.docker.internal is correctly defined on Linux
       - host.docker.internal:host-gateway
+    ports:
+    - 9003
+    - 9000
 
   pwa:
     build:
@@ -30,8 +35,7 @@ services:
       # On Linux, you may want to comment the following line for improved performance
       WATCHPACK_POLLING: true
     ports:
-      - 3001:3001
-      - 24679:24679
+      - '3001:3001'
 
   caddy:
     volumes:
@@ -39,6 +43,22 @@ services:
       - ./api/docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
     environment:
       MERCURE_EXTRA_DIRECTIVES: demo
+
+  pgadmin:
+    container_name: sip.pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: 'siap@example.com'
+      PGADMIN_DEFAULT_PASSWORD: 'siap'
+    ports:
+      - '1080:80'
+  
+  #chrome:
+  #  container_name: sip.chrome
+  #  build:
+  #    context: ./api/docker/chrome
+  #  ports:
+  #    - 9222:9222
 
 ###> doctrine/doctrine-bundle ###
   database:

@@ -1,0 +1,40 @@
+default:
+    gherkin:
+        filters:
+            tags: "~@ui"
+    suites:
+        default:
+            contexts:
+                - Behat\MinkExtension\Context\MinkContext
+                - behatch:context:rest
+                - behatch:context:json
+                - SIP\Tests\Behat\ResourceContext
+                - SIP\Tests\Behat\SecurityContext
+                - SIP\Tests\Behat\DemoContext
+                #- Paroki\Tests\Behat\UserContext
+                #- Paroki\Tests\Behat\ReferensiContext
+
+    extensions:
+        #DMore\ChromeExtension\Behat\ServiceContainer\ChromeExtension: ~
+        FriendsOfBehat\SymfonyExtension:
+            bootstrap: tests/bootstrap.php
+            kernel:
+                class: SIP\Kernel
+                environment: test
+                debug: true
+        Behat\MinkExtension:
+            base_url: 'http://localhost/'
+            files_path: 'features/files'
+            default_session: symfony
+            #javascript_session: chrome_headless
+            sessions:
+                symfony:
+                    symfony: ~
+            #    chrome_headless:
+            #        chrome:
+            #            api_url: http://localhost:9222
+            #            validate_certificate: false
+        Behatch\Extension: ~
+        #FriendsOfBehat\MinkDebugExtension:
+        #    directory: build/behat
+        #    screenshot: true

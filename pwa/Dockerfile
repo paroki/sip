@@ -16,7 +16,6 @@ RUN corepack enable && \
 # Uncomment the following line in case you want to disable telemetry during dev and build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-
 # Deps stage, preserve dependencies in cache as long as the lockfile isn't changed
 FROM builder_base AS deps
 
@@ -26,6 +25,12 @@ RUN pnpm fetch
 COPY --link . .
 RUN pnpm install -r --offline
 
+# ENV UID 1001
+# ENV GID 1001
+
+# RUN addgroup --gid ${GID} sip
+# RUN adduser -G sip -S --uid ${UID} sip
+# USER sip
 
 # Development image
 FROM deps as dev
@@ -33,9 +38,8 @@ FROM deps as dev
 EXPOSE 3000
 ENV PORT 3000
 
-# Vite HMR port
 EXPOSE 3001
-ENV HMR_PORT 3001
+ENV PORT_DEV 3001
 
 CMD ["sh", "-c", "pnpm install -r --offline; pnpm dev"]
 
@@ -55,15 +59,10 @@ ENV NODE_ENV production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
 COPY --from=builder --link /srv/app/public ./public
 
 # Automatically leverage output traces to reduce image size
 COPY --from=builder --link --chown=nextjs:nodejs /srv/app/.nuxt ./
-
-USER nextjs
 
 EXPOSE 3000
 

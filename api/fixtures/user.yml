@@ -1,0 +1,17 @@
+SIP\Security\Entity\User:
+    admin:
+        nama: Super Administrator
+        email: 'admin@sip.com'
+        # password: '\$2y\$04\$AVN/.dj5xdbz9bq7WdXKEeExYu1lLiGrnmtH7a.R7DuPNT7k.WkKW'
+        password: <hashPassword('sip')>
+        roles: ['ROLE_SUPER_ADMIN']
+    paroki_user:
+        nama: Paroki User
+        email: 'user.paroki@sip.com'
+        password: '\$2y\$04\$fu/WZKbE4imWFdqMGK9Ai.B0xPjNEaNClVPDn5Os5LzEK6klCdjYm'
+        roles: ['ROLE_PAROKI_USER']
+    paroki_admin:
+        nama: Paroki Admin
+        email: 'admin.paroki@sip.com'
+        password: '\$2y\$04\$fu/WZKbE4imWFdqMGK9Ai.B0xPjNEaNClVPDn5Os5LzEK6klCdjYm'
+        roles: ['ROLE_PAROKI_ADMIN']

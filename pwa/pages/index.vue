@@ -1,15 +1,30 @@
 <template>
-  <div>
+  <div class="p-8">
+    <h3 class="text-3xl">Homepage</h3>
+    {{ store.loggedIn ? "Logged In":"Not Logged IN"}}
 
-    <NuxtWelcome />
+    <div class="inline-flex">
+      <button @click="logout">Logout</button>
+    </div>
   </div>
 </template>
-<script>
-import {useLayoutStore} from "../store/layout";
+<script lang="ts">
+
+import { useAuthStore } from "~/stores"
 
 export default {
-    computed: {
-        ...mapState(useLayoutStore,["sidebarVisible", "sidebarUnfoldable"])
+  name: 'IndexPage',
+  setup(){
+    const store = useAuthStore()
+    return {
+      store
     }
+  },
+  methods: {
+    async logout(){
+      await this.store.logout()
+      await navigateTo('/login')
+    }
+  }
 }
 </script>

@@ -18,9 +18,11 @@ jobs:
         run: docker compose pull --ignore-pull-failures || true
       - name: Start services
         run: docker compose up --build -d
+      - name: Create build directory
+        run: mkdir -p build/logs
       - name: Wait for services
         run: |
-          while status="$(docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" "$(docker compose ps -q php)")"; do
+          while status="$(docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" "$(docker compose ps -q api)")"; do
             case $status in
               starting) sleep 1;;
               healthy) exit 0;;
@@ -40,9 +42,9 @@ jobs:
         run: "curl -vk -o /dev/null -H 'Accept: text/html' https://localhost"
       - name: Create test database
         run: |
-          docker compose exec -T php bin/console -e test doctrine:database:create
-          docker compose exec -T php bin/console -e test doctrine:migrations:migrate --no-interaction
-      - name: PHPUnit
-        run: docker compose exec -T php bin/phpunit
+          ./sip api -e test doctrine:database:create
+          ./sip api -e test doctrine:migrations:migrate --no-interaction
       - name: Doctrine Schema Validator
-        run: docker compose exec -T php bin/console doctrine:schema:validate --skip-sync
+        run: ./sip api doctrine:schema:validate --skip-sync
+      - name: PHPUnit
+        run: ./sip phpunit

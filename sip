@@ -131,9 +131,9 @@ export APP_PORT=${APP_PORT:-80}
 export APP_SERVICE=${APP_SERVICE:-"api"}
 
 EXEC="yes"
-# Determine if Sail is currently up...
+# Determine if SIP is currently up...
 if "${DOCKER_COMPOSE[@]}" ps "$APP_SERVICE" 2>&1 | grep 'Exit\|exited'; then
-    echo "${BOLD}Shutting down old Sail processes...${NC}" >&2
+    echo "${BOLD}Shutting down old SIP processes...${NC}" >&2
 
     "${DOCKER_COMPOSE[@]}" down > /dev/null 2>&1
 
@@ -141,6 +141,8 @@ if "${DOCKER_COMPOSE[@]}" ps "$APP_SERVICE" 2>&1 | grep 'Exit\|exited'; then
 elif [ -z "$("${DOCKER_COMPOSE[@]}" ps -q)" ]; then
     EXEC="no"
 fi
+
+EXEC="yes"
 
 ARGS=()
 
@@ -165,10 +167,53 @@ elif [ "$1" == "pnpm" ]; then
         sail_is_not_running
     fi
 
+# Proxy Composer commands to the "composer" binary on the application container...
+elif [ "$1" == "composer" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=(exec "$APP_SERVICE" "composer" "$@")
+    else
+        sail_is_not_running
+    fi
+
+# Proxy behat commands to the "behat" binary on the application container...
+elif [ "$1" == "behat" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=(exec "$APP_SERVICE" "vendor/bin/behat" "$@")
+    else
+        sail_is_not_running
+    fi
+
+# Proxy api commands to the "bin/console" script on the application container...
+elif [ "$1" == "api" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=(exec "$APP_SERVICE" "php" "bin/console" "$@")
+    else
+        sail_is_not_running
+    fi
+
+# Proxy the "phpunit" command to "php vendor/bin/phpunit"...
+elif [ "$1" == "phpunit" ]; then
+    shift 1
+
+    if [ "$EXEC" == "yes" ]; then
+        [ ! -t 0 ] && ARGS+=(-T)
+        ARGS+=(exec "$APP_SERVICE" php vendor/bin/phpunit "$@")
+    else
+        sail_is_not_running
+    fi
+
 # Runs docker compose command as default
 else
     ARGS+=("$@")
 fi
 
-# echo "${ARGS[@]}"
 "${DOCKER_COMPOSE[@]}" "${ARGS[@]}"
