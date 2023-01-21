@@ -44,14 +44,14 @@ services:
     environment:
       MERCURE_EXTRA_DIRECTIVES: demo
 
-  pgadmin:
-    container_name: sip.pgadmin
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: 'siap@example.com'
-      PGADMIN_DEFAULT_PASSWORD: 'siap'
-    ports:
-      - '1080:80'
+  #pgadmin:
+  #  container_name: sip.pgadmin
+  #  image: dpage/pgadmin4
+  #  environment:
+  #    PGADMIN_DEFAULT_EMAIL: 'siap@example.com'
+  #    PGADMIN_DEFAULT_PASSWORD: 'siap'
+  #  ports:
+  #    - '1080:80'
   
   #chrome:
   #  container_name: sip.chrome
