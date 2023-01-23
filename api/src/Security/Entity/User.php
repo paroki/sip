@@ -11,43 +11,56 @@
 
 namespace SIP\Security\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata as Api;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use SIP\Security\Controller\DeleteController;
 use SIP\Security\Repository\UserRepository;
 use SIP\Security\UserPasswordHasher;
 use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Gedmo\Mapping\Annotation as Gedmo;
 
 #[Api\ApiResource(
     shortName: 'user',
     operations: [
         new Api\GetCollection(),
         new Api\Post(
-            processor: UserPasswordHasher::class,
             security: "is_granted('ROLE_ADMIN')",
+            processor: UserPasswordHasher::class,
         ),
         new Api\Get(),
         new Api\Put(processor: UserPasswordHasher::class),
         new Api\Patch(processor: UserPasswordHasher::class),
-        new Api\Delete(),
+        new Api\Delete(
+            controller: DeleteController::class
+        ),
     ],
     normalizationContext: ['groups' => ['user:read']],
     denormalizationContext: ['groups' => ['user:create', 'user:update']],
 )]
+#[Api\ApiFilter(OrderFilter::class, properties: ['nama' => 'asc'], arguments: ['orderParameterName' => 'sort'])]
+#[Api\ApiFilter(BooleanFilter::class, properties: ['active'])]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'scr_user')]
+#[UniqueEntity('email', message: 'Alamat email sudah digunakan.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    public const ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
-    const ROLE_KEUSKUPAN_ADMIN = 'ROLE_KEUSKUPAN_ADMIN';
-    const ROLE_KEUSKUPAN_USER = 'ROLE_KEUSKUPAN_USER';
-    const ROLE_PAROKI_ADMIN = 'ROLE_PAROKI_ADMIN';
-    const ROLE_PAROKI_USER = 'ROLE_PAROKI_USER';
+    public const ROLE_SUPER_ADMIN     = 'ROLE_SUPER_ADMIN';
+    public const ROLE_KEUSKUPAN_ADMIN = 'ROLE_KEUSKUPAN_ADMIN';
+    public const ROLE_KEUSKUPAN_USER  = 'ROLE_KEUSKUPAN_USER';
+    public const ROLE_PAROKI_ADMIN    = 'ROLE_PAROKI_ADMIN';
+    public const ROLE_PAROKI_USER     = 'ROLE_PAROKI_USER';
+
+    public const ROLE_ADMIN = 'ROLE_ADMIN';
+
     public const ROLE_USER = 'ROLE_USER';
 
     #[ORM\Id]
@@ -83,6 +96,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\Column(type: Types::BOOLEAN)]
+    private bool $active = true;
+
     public function eraseCredentials(): void
     {
         $this->plainPassword = null;
@@ -93,11 +109,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }
 
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+
+    public function getActive(): bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): void
+    {
+        $this->active = $active;
+    }
+
     public function getId(): ?string
     {
         return $this->id;
     }
-
 
     /**
      * @return array|string[]
@@ -111,57 +141,39 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-    /**
-     * @return string|null
-     */
     public function getNama(): ?string
     {
         return $this->nama;
     }
 
-    /**
-     * @param string|null $nama
-     * @return User
-     */
-    public function setNama(?string $nama): User
+    public function setNama(?string $nama): self
     {
         $this->nama = $nama;
+
         return $this;
     }
 
-    /**
-     * @return \DateTimeImmutable|null
-     */
     public function getUpdatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
     }
 
-    /**
-     * @param \DateTimeImmutable|null $updatedAt
-     * @return User
-     */
-    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): User
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    /**
-     * @param string|null $password
-     * @return User
-     */
-    public function setPassword(?string $password): User
+    public function setPassword(?string $password): self
     {
         $this->password = $password;
+
         return $this;
     }
 

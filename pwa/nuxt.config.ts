@@ -1,5 +1,4 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-
 const isProduction = 'production' === process.env.NODE_ENV
 
 export default defineNuxtConfig({
@@ -54,14 +53,14 @@ export default defineNuxtConfig({
     }
   },
   router: {
-    hashMode: true,
-    middleware: [
-      'auth'
-    ]
+    options: {
+      hashMode: true,
+      linkActiveClass: 'active',
+    },
   },
   pwa: {
     workbox: {
       enabled: isProduction
     }
-  }
+  },
 })

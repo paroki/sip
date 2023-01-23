@@ -32,7 +32,7 @@ export default [
     items: [
       {
         title: 'User',
-        to: '/user',
+        to: '/konfigurasi/user',
         icon: 'cil-people',
         role: ROLE_ADMIN
       },

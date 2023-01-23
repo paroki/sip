@@ -1,8 +1,7 @@
 import { useLayoutStore } from "~/stores"
 import * as config from '~/lib/config'
-import {storeHMRUpdate} from "~/lib/helpers"
+import {storeHMRUpdate} from "~/lib/common"
 import api from "~/lib/api"
-import {ROLE_ADMIN, ROLE_KEUSKUPAN_ADMIN, ROLE_PAROKI_ADMIN} from "~/lib/config"
 
 export const AUTH_PROFILE_KEY = 'PROFILE'
 
@@ -19,7 +18,7 @@ export const useAuthStore = defineStore('auth', {
     initialized: false,
     profile: null as AuthProfile | null,
     checkProfileError: null as string | null,
-    loginError: null as string | null
+    loginError: null as string | null,
   }),
 
   getters: {
@@ -53,7 +52,7 @@ export const useAuthStore = defineStore('auth', {
       this.reset()
 
       await api.fetch('/auth/profile')
-        .then(response => response.json())
+        .then((response) => response.json())
         .then(data => {
           this.saveProfile(data)
         })
@@ -77,7 +76,7 @@ export const useAuthStore = defineStore('auth', {
       }
 
       return api.fetch('/auth/login', options)
-        .then(response => {
+        .then((response: Response) => {
           this.toggleLoading()
           if(200 == response.status){
             return this.checkProfile()

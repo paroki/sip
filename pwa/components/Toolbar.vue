@@ -1,18 +1,21 @@
 <template>
-  <div style="margin-top: 16px;">
+  <div class="form-toolbar">
     <CButton
       v-if="handleSubmit"
       color="success"
       @click="submitItem"
       type="button"
     >
+      <CIcon icon="cil-save"/>
       Simpan
     </CButton>
     <CButton
       v-if="handleReset"
       color="info"
       @click="resetItem"
+      type="button"
     >
+      <CIcon icon="cil-reload"/>
       Reset
     </CButton>
   </div>
@@ -41,12 +44,8 @@ export default {
   },
   methods: {
     async submitItem(){
-      try{
-        if(this.handleSubmit){
-          await this.handleSubmit()
-        }
-      }catch (err){
-        console.log(err)
+      if(this.handleSubmit){
+        await this.handleSubmit()
       }
     },
     resetItem() {
@@ -59,5 +58,13 @@ export default {
 </script>
 
 <style scoped>
-
+.form-toolbar {
+  margin-top: 16px!important;
+}
+.form-toolbar .btn {
+  margin-right: 8px!important;
+}
+.form-toolbar .btn:last-child {
+  margin-right: 0 !important;
+}
 </style>

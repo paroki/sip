@@ -1,11 +1,17 @@
 <?php
 
+/*
+ * This file is part of the SIP project.
+ *
+ * (c) 2023 SIP Developer Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace SIP\Core;
 
-
 use ApiPlatform\Operation\PathSegmentNameGeneratorInterface;
-use ApiPlatform\Util\Inflector;
 
 final class SingularPathSegmentNameGenerator implements PathSegmentNameGeneratorInterface
 {
@@ -18,9 +24,7 @@ final class SingularPathSegmentNameGenerator implements PathSegmentNameGenerator
      */
     public function getSegmentName(string $name, bool $collection = true): string
     {
-        $name = $this->dashize($name);
-
-        return $name;
+        return $this->dashize($name);
     }
 
     private function dashize(string $string): string
@@ -28,4 +32,3 @@ final class SingularPathSegmentNameGenerator implements PathSegmentNameGenerator
         return strtolower(preg_replace('~(?<=\\w)([A-Z])~', '-$1', $string));
     }
 }
-

@@ -44,3 +44,4 @@ Feature:
         And the JSON node id should exist
         And the JSON node nama should be equal to "Test User"
         And the JSON node roles should exist
+

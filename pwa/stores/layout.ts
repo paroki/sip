@@ -1,4 +1,4 @@
-import {storeHMRUpdate} from "~/lib/helpers"
+import {storeHMRUpdate} from "~/lib/common"
 
 export const useLayoutStore = defineStore('layout', {
   state: () => ({
