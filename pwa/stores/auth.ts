@@ -1,8 +1,8 @@
 import { useLayoutStore } from "~/stores"
 import * as config from '~/lib/config'
-import {storeHMRUpdate} from "~/lib/common"
-import api from "~/lib/api"
-
+import { storeHMRUpdate } from "~/lib/common"
+import {defineStore} from "pinia"
+import fetch from '~/lib/fetch'
 export const AUTH_PROFILE_KEY = 'PROFILE'
 
 interface AuthProfile {
@@ -51,7 +51,7 @@ export const useAuthStore = defineStore('auth', {
       this.toggleLoading()
       this.reset()
 
-      await api.fetch('/auth/profile')
+      await fetch('/auth/profile')
         .then((response) => response.json())
         .then(data => {
           this.saveProfile(data)
@@ -75,7 +75,7 @@ export const useAuthStore = defineStore('auth', {
         })
       }
 
-      return api.fetch('/auth/login', options)
+      return fetch('/auth/login', options)
         .then((response: Response) => {
           this.toggleLoading()
           if(200 == response.status){
@@ -89,9 +89,13 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async logout(){
-      await fetch('/auth/logout').then((data) => {
-        this.reset()
-      })
+      try{
+        await fetch('/auth/logout')
+      }catch(e:any){
+        console.log(e.message)
+      }
+      console.log('success')
+      this.reset()
     },
 
     saveProfile(data: any){
@@ -113,5 +117,5 @@ export const useAuthStore = defineStore('auth', {
   }
 })
 
-storeHMRUpdate(useAuthStore)
+// storeHMRUpdate(useAuthStore)
 

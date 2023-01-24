@@ -7,8 +7,8 @@ export declare interface JsonViolation {
 
 export declare interface JsonResponse {
   violations: JsonViolation[] | [],
-  "hydra:description"?: string
-  "hydra:title"?: string
+  'hydra:description'?: string
+  'hydra:title'?: string
 }
 
 export declare interface StringAssociativeArray {

@@ -36,24 +36,34 @@ class ChangePasswordController
     public function index(
         Request $request,
         #[CurrentUser]
-        User $user
+        User $currentUser
     ): JsonResponse {
         $content            = $request->getContent();
         $data               = json_decode($content);
         $userRepository     = $this->userRepository;
-        $newPassword        = $data->newPassword;
-        $newPasswordConfirm = $data->newPasswordConfirm;
-        $id                 = $data->id;
-        $user               = $userRepository->find($id);
+        $password        = $data->password;
+        $passwordConfirm = $data->passwordConfirm;
+        $user               = null;
 
-        if ($newPassword !== $newPasswordConfirm) {
+        if(property_exists($data, 'id')){
+            $id                 = $data->id;
+            $user = $userRepository->find($id);
+        }
+
+        if ($password !== $passwordConfirm) {
             return new JsonResponse([
                 'message' => 'Password dan konfirmasi password tidak sama',
             ], 422);
         }
 
-        $userRepository->upgradePassword($user, $newPassword);
+        if(null !== $user){
+            $userRepository->upgradePassword($user, $password);
+            return new JsonResponse([], 200);
+        }
 
-        return new JsonResponse([], 200);
+        return new JsonResponse([
+            "code" => "422",
+            "message" => "Unknown user to process",
+        ], 422);
     }
 }

@@ -1,6 +1,6 @@
 import {ROLE_ADMIN} from "~/lib/config"
 
-export default [
+export const nav = [
   {
     title: 'Dashboard',
     to: '/',
@@ -32,7 +32,7 @@ export default [
     items: [
       {
         title: 'User',
-        to: '/konfigurasi/user',
+        to: '/setting/user',
         icon: 'cil-people',
         role: ROLE_ADMIN
       },
@@ -44,3 +44,5 @@ export default [
     to: '/logout'
   }
 ]
+
+export default nav
