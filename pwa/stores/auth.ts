@@ -1,9 +1,8 @@
 import { useLayoutStore } from "~/stores"
 import * as config from '~/lib/config'
-import {storeHMRUpdate} from "~/lib/helpers"
-import api from "~/lib/api"
-import {ROLE_ADMIN, ROLE_KEUSKUPAN_ADMIN, ROLE_PAROKI_ADMIN} from "~/lib/config"
-
+import { storeHMRUpdate } from "~/lib/common"
+import {defineStore} from "pinia"
+import fetch from '~/lib/fetch'
 export const AUTH_PROFILE_KEY = 'PROFILE'
 
 interface AuthProfile {
@@ -19,7 +18,7 @@ export const useAuthStore = defineStore('auth', {
     initialized: false,
     profile: null as AuthProfile | null,
     checkProfileError: null as string | null,
-    loginError: null as string | null
+    loginError: null as string | null,
   }),
 
   getters: {
@@ -52,8 +51,8 @@ export const useAuthStore = defineStore('auth', {
       this.toggleLoading()
       this.reset()
 
-      await api.fetch('/auth/profile')
-        .then(response => response.json())
+      await fetch('/auth/profile')
+        .then((response) => response.json())
         .then(data => {
           this.saveProfile(data)
         })
@@ -76,8 +75,8 @@ export const useAuthStore = defineStore('auth', {
         })
       }
 
-      return api.fetch('/auth/login', options)
-        .then(response => {
+      return fetch('/auth/login', options)
+        .then((response: Response) => {
           this.toggleLoading()
           if(200 == response.status){
             return this.checkProfile()
@@ -90,9 +89,13 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async logout(){
-      await fetch('/auth/logout').then((data) => {
-        this.reset()
-      })
+      try{
+        await fetch('/auth/logout')
+      }catch(e:any){
+        console.log(e.message)
+      }
+      console.log('success')
+      this.reset()
     },
 
     saveProfile(data: any){
@@ -114,5 +117,5 @@ export const useAuthStore = defineStore('auth', {
   }
 })
 
-storeHMRUpdate(useAuthStore)
+// storeHMRUpdate(useAuthStore)
 

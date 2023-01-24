@@ -21,15 +21,12 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    /**
-     * @var UserPasswordHasherInterface
-     */
     private UserPasswordHasherInterface $hasher;
 
     public function __construct(
         ManagerRegistry $registry,
         UserPasswordHasherInterface $hasher
-    ){
+    ) {
         parent::__construct($registry, User::class);
         $this->hasher = $hasher;
     }
@@ -40,7 +37,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setPassword($hashed);
     }
 
-    public function save(User $entity, bool $flush = false): void
+    public function save(User $entity, bool $flush = true): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -49,7 +46,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
     }
 
-    public function remove(User $entity, bool $flush = false): void
+    public function remove(User $entity, bool $flush = true): void
     {
         $this->getEntityManager()->remove($entity);
 

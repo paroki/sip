@@ -1,4 +1,3 @@
-import { AUTH_PROFILE_KEY } from "~/lib/config"
 import { useAuthStore } from "~/stores"
 
 export default defineNuxtRouteMiddleware(async (to) => {

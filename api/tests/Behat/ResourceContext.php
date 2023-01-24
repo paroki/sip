@@ -1,22 +1,25 @@
 <?php
 
+/*
+ * This file is part of the SIP project.
+ *
+ * (c) 2023 SIP Developer Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace SIP\Tests\Behat;
 
-
 use ApiPlatform\Api\IriConverterInterface;
-use ApiPlatform\Api\UrlGeneratorInterface;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
-use Behat\Gherkin\Node\TableNode;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use SIP\Security\Entity\User;
 use SIP\Security\Repository\UserRepository;
-use SIP\Security\SecurityConstant;
 use SIP\Tests\Behat\Concerns\Rest;
-use function PHPUnit\Framework\assertNotNull;
-use function PHPUnit\Framework\assertSame;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class ResourceContext implements Context
 {
@@ -29,12 +32,12 @@ class ResourceContext implements Context
 
     public function __construct(
         IriConverterInterface $iriConverter,
-        EntityManagerInterface $em
-    )
-    {
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $hasher
+    ) {
         $this->iriConverter = $iriConverter;
-        $this->resourceMaps = include __DIR__ . '/Resources/resource_maps.php';
-        $this->em = $em;
+        $this->resourceMaps = include __DIR__.'/Resources/resource_maps.php';
+        $this->em           = $em;
     }
 
     /**
@@ -44,11 +47,10 @@ class ResourceContext implements Context
         string $resource,
         string $filter,
         string $value
-    ): void
-    {
+    ): void {
         $repo = $this->getRepository($resource);
-        $ob = $repo->findOneBy([$filter => $value]);
-        if (is_object($ob)) {
+        $ob   = $repo->findOneBy([$filter => $value]);
+        if (\is_object($ob)) {
             $this->em->remove($ob);
             $this->em->flush();
         }
@@ -66,14 +68,10 @@ class ResourceContext implements Context
     public function iHaveResource(string $name, array $data): object
     {
         $class = $this->getResourceClass($name);
-        $filters = array_slice($data, 0, 1);
-        $ob = $this->findResource($class, $filters);
-
-        if (is_null($ob)) {
-            $ob = $this->createResource($class, $data);
-        }
+        $ob    = $this->updateResource($class, $data);
 
         $this->currentResource = $ob;
+
         return $ob;
     }
 
@@ -84,8 +82,7 @@ class ResourceContext implements Context
     public function iSendARequestToWith(
         string $method,
         ?PyStringNode $body = null
-    ): void
-    {
+    ): void {
         $uri = $this->iriConverter->getIriFromResource($this->currentResource);
         $this->restContext->iSendARequestTo($method, $uri, $body);
     }
@@ -95,10 +92,13 @@ class ResourceContext implements Context
      */
     public function iSendRequestTo($method, string $resource, ?PyStringNode $body=null)
     {
-        $class = $this->getResourceClass($resource);
-        //$url = $this->iriConverter->getIriFromResource(User::class);
-        $url = '/users';
+        $url  = $resource;
         $rest = $this->restContext;
+        if ('/' === substr($resource, 0)) {
+            $class = $this->getResourceClass($resource);
+            // $url = $this->iriConverter->getIriFromResource(User::class);
+            $url = '/users';
+        }
 
         $rest->iAddHeaderEqualTo('Content-Type', 'application/json');
         $rest->iAddHeaderEqualTo('Accept', 'application/json');
@@ -108,21 +108,26 @@ class ResourceContext implements Context
     public function findResource(string $class, array $filters): ?object
     {
         $repo = $this->em->getRepository($class);
+
         return $repo->findOneBy($filters);
     }
 
-    public function createResource(mixed $class, mixed $json): object
+    public function updateResource(mixed $class, mixed $json): object
     {
-        $ob = new $class();
-        $em = $this->em;
-        $repo = $em->getRepository($class);
+        $em      = $this->em;
+        $repo    = $em->getRepository($class);
+        $filters = \array_slice($json, 0, 1);
+        $ob      = $this->findResource($class, $filters);
 
-        foreach ($json as $name => $value){
+        if ( ! \is_object($ob)) {
+            $ob = new $class();
+        }
+        foreach ($json as $name => $value) {
             $setter = 'set'.$name;
-            call_user_func([$ob, $setter], $value);
+            \call_user_func([$ob, $setter], $value);
         }
 
-        if($repo instanceof UserRepository){
+        if ($repo instanceof UserRepository) {
             $repo->hashPassword($ob);
         }
 
@@ -139,13 +144,13 @@ class ResourceContext implements Context
 
     public function getResourceClass(string $resource): string
     {
-        if(class_exists($resource)){
+        if (class_exists($resource)) {
             return $resource;
         }
-        if(isset($this->resourceMaps[$resource])){
+        if (isset($this->resourceMaps[$resource])) {
             return $this->resourceMaps[$resource];
         }
-        throw new \Exception("Invalid resource name: ".$resource);
+        throw new \Exception('Invalid resource name: '.$resource);
     }
 
     /**

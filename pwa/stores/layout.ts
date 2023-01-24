@@ -1,4 +1,5 @@
-import {storeHMRUpdate} from "~/lib/helpers"
+import {defineStore} from "pinia"
+import {storeHMRUpdate} from "~/lib/common"
 
 export const useLayoutStore = defineStore('layout', {
   state: () => ({
@@ -25,4 +26,4 @@ export const useLayoutStore = defineStore('layout', {
   }
 })
 
-storeHMRUpdate(useLayoutStore)
+// storeHMRUpdate(useLayoutStore)

@@ -1,14 +1,19 @@
 <?php
 
+/*
+ * This file is part of the SIP project.
+ *
+ * (c) 2023 SIP Developer Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace SIP\Security\Subscriber;
 
-
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
-use SIP\Security\SecurityConstant;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Cookie;
 
 class JWTEventSubscriber implements EventSubscriberInterface
 {
@@ -23,11 +28,11 @@ class JWTEventSubscriber implements EventSubscriberInterface
     {
         $data = $event->getData();
 
-        if(isset($data['token'])){
-            /* @var \SIP\Security\Entity\User $user */
-            $user = $event->getUser();
-            $response = $event->getResponse();
-            $data = json_decode($response->getContent(), true);
+        if (isset($data['token'])) {
+            /** @var \SIP\Security\Entity\User $user */
+            $user            = $event->getUser();
+            $response        = $event->getResponse();
+            $data            = json_decode($response->getContent(), true);
             $data['user_id'] = $user->getId();
 
             $event->setData($data);

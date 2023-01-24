@@ -5,6 +5,7 @@
       <AppHeader />
       <div class="body flex-grow-1 px-3">
         <CContainer lg>
+          <Alert/>
           <NuxtPage />
         </CContainer>
       </div>
@@ -16,10 +17,11 @@
 import AppSidebar from "~/components/ui/AppSidebar.vue"
 import AppHeader from "~/components/ui/AppHeader.vue"
 import AppFooter from "~/components/ui/AppFooter.vue"
-export default {
+import Alert from "~/components/ui/Alert.vue"
+export default defineComponent({
   name: 'DefaultLayout',
-  components: {AppFooter, AppHeader, AppSidebar}
-}
+  components: {AppFooter, AppHeader, AppSidebar, Alert}
+})
 </script>
 <style>
 

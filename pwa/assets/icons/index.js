@@ -91,10 +91,17 @@ import {
   cilUserPlus,
   cilUserX,
   cilSave,
+  cilReload,
+  cilArrowCircleLeft,
+  cilArrowCircleRight,
+  cilSortAscending,
+  cilSortDescending,
+  cilSortAlphaUp,
+  cilSortAlphaDown,
 } from '@coreui/icons'
 
+
 export const iconsSet = Object.assign(
-  {},
   {
     cilArrowBottom,
     cilArrowRight,
@@ -182,8 +189,6 @@ export const iconsSet = Object.assign(
     cibCcApplePay,
     cibCcAmex,
   },
-
-  // custom 1
   {
     cilHome,
     cilAccountLogout,
@@ -194,5 +199,12 @@ export const iconsSet = Object.assign(
     cilUserPlus,
     cilUserX,
     cilSave,
+    cilReload,
+    cilArrowCircleLeft,
+    cilArrowCircleRight,
+    cilSortAscending,
+    cilSortDescending,
+    cilSortAlphaUp,
+    cilSortAlphaDown,
   }
 )

@@ -1,8 +1,15 @@
 <?php
 
+/*
+ * This file is part of the SIP project.
+ *
+ * (c) 2023 SIP Developer Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace SIP\Tests\Behat;
-
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
@@ -11,21 +18,19 @@ use SIP\Security\Entity\User;
 use SIP\Security\SecurityConstant;
 use SIP\Tests\Behat\Concerns\ResourceContext;
 use SIP\Tests\Behat\Concerns\Rest;
+
 use function PHPUnit\Framework\assertNotNull;
 
 class SecurityContext implements Context
 {
-    use Rest, ResourceContext;
+    use ResourceContext;
+    use Rest;
 
-    /**
-     * @var JWTEncoderInterface
-     */
     private JWTEncoderInterface $jwtEncoder;
 
     public function __construct(
         JWTEncoderInterface $jwtEncoder
-    )
-    {
+    ) {
         $this->jwtEncoder = $jwtEncoder;
     }
 
@@ -54,12 +59,12 @@ class SecurityContext implements Context
 
         assertNotNull(
             $session->getCookie(SecurityConstant::BEARER_COOKIE),
-            "Cookie should contain ".SecurityConstant::BEARER_COOKIE
+            'Cookie should contain '.SecurityConstant::BEARER_COOKIE
         );
-        //assertNotNull(
+        // assertNotNull(
         //    $session->getCookie(SecurityConstant::PROFILE_COOKIE),
         //    "Cookie should contain ".SecurityConstant::PROFILE_COOKIE
-        //);
+        // );
     }
 
     /**
@@ -68,7 +73,7 @@ class SecurityContext implements Context
     public function iHaveSignedInAsAdmin()
     {
         $this->iHaveUser(
-            $email ='sip@example.com',
+            $email    ='sip@example.com',
             $password ='sip',
             [User::ROLE_SUPER_ADMIN]
         );
@@ -81,7 +86,7 @@ class SecurityContext implements Context
     public function iHaveSignedIn()
     {
         $this->iHaveUser(
-            $email ='test@example.com',
+            $email    ='test@example.com',
             $password ='test',
             [User::ROLE_USER]
         );
@@ -93,7 +98,7 @@ class SecurityContext implements Context
         $this->resourceContext->iHaveResource(User::class, [
             'email' => $email,
             'plainPassword' => $password,
-            'roles' => $roles
+            'roles' => $roles,
         ]);
     }
 }

@@ -113,6 +113,6 @@ return (new PhpCsFixer\Config())
             ],
         ],
         'void_return' => false,
-        'no_useless_comment' => true,
+        // 'no_useless_comment' => true,
     ])
     ->setFinder($finder);
