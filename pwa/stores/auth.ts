@@ -1,121 +1,106 @@
-import { useLayoutStore } from "~/stores"
-import * as config from '~/lib/config'
-import { storeHMRUpdate } from "~/lib/common"
-import {defineStore} from "pinia"
-import fetch from '~/lib/fetch'
-export const AUTH_PROFILE_KEY = 'PROFILE'
+import type { ApiResponseError } from '@doyolabs/api-client-core'
+import { useApi, useApiClient } from '@doyolabs/api-client-core'
+import { defineStore } from 'pinia'
+import { useLocalStorage } from '@vueuse/core'
+import dayjs from 'dayjs'
+import { m } from 'vitest/dist/types-aac763a5'
+import { router } from '~/composables'
 
-interface AuthProfile {
-  id: string,
-  nama: string,
-  roles: string[],
-  routes: object
+export interface Profile {
+  id?: string,
+  nama?: string,
+  expiresAt?: string,
+  refreshExpiresAt?: string,
+  roles?: string[]
 }
 
-export const useAuthStore = defineStore('auth', {
+export interface UserState {
+  profile?: Profile|{},
+  error?: ApiResponseError<Profile>,
+  loading: boolean,
+}
 
-  state: () => ({
-    initialized: false,
-    profile: null as AuthProfile | null,
-    checkProfileError: null as string | null,
-    loginError: null as string | null,
+export const useAuthStore = defineStore('user', {
+  state: (): UserState => ({
+    profile: useLocalStorage<Profile>('profile', {}),
+    error: undefined,
+    loading: false
   }),
-
   getters: {
-    loggedIn: (state) => !!state.profile,
-    routes: (state) => state.profile ? state.profile.routes : {},
-    isGranted: (state) => {
-      return (role: string) => state.profile ? state.profile.roles.includes(role):false
+    authenticated: (state) => {
+      if (!state?.profile?.expiresAt) { return false }
+
+      return true
+    },
+    tokenExpired: (state) => {
+      // returns true when user not login
+      if (!state?.profile) { return true }
+
+      const profile = state?.profile as Profile
+      const expiresAt = dayjs(profile.expiresAt)
+      const duration = expiresAt.diff(dayjs(), 'minutes')
+
+      return duration <= 5
+    },
+    refreshTokenExpired: (state) => {
+      // returns true when user not login
+      if (!state?.profile) { return true }
+
+      const profile = state?.profile as Profile
+      const refreshExpiresAt = dayjs(profile.refreshExpiresAt)
+      const duration = refreshExpiresAt.diff(dayjs(), 'days')
+
+      return duration <= 1
     }
   },
-
   actions: {
-    async initialize(){
-      if(this.initialized){
-        return;
-      }
-      const data = localStorage.getItem(config.AUTH_PROFILE_KEY)
-      if(data){
-        this.profile = JSON.parse(data)
-      }else{
-        this.checkProfile()
-      }
-
-      this.initialized = true
+    toggleLoading () {
+      this.loading = !this.loading
     },
-
-    async checkProfile(){
-      if(null !== this.loginError){
-        return
-      }
-      this.toggleLoading()
-      this.reset()
-
-      await fetch('/auth/profile')
-        .then((response) => response.json())
-        .then(data => {
-          this.saveProfile(data)
-        })
-        .catch(err => {
-          this.checkProfileError = err.message
-        })
-
-      this.initialized = true
-      this.toggleLoading()
+    resetError () {
+      this.error = undefined
     },
-
-    login(email: string, password: string){
+    async login (payload: object) {
       this.toggleLoading()
-      this.reset()
-      const options = {
+      this.resetError()
+      const url = '/auth/login' // router.generate('auth_login')
+      const api = useApiClient()
+
+      const { data, error } = await api<Profile>(url, {
         method: 'POST',
-        body: JSON.stringify({
-          email,
-          password
-        })
-      }
-
-      return fetch('/auth/login', options)
-        .then((response: Response) => {
-          this.toggleLoading()
-          if(200 == response.status){
-            return this.checkProfile()
-          }
-        })
-        .catch(err => {
-          this.toggleLoading()
-          this.loginError = err.message
-        })
-    },
-
-    async logout(){
-      try{
-        await fetch('/auth/logout')
-      }catch(e:any){
-        console.log(e.message)
-      }
-      console.log('success')
-      this.reset()
-    },
-
-    saveProfile(data: any){
-      localStorage.setItem(AUTH_PROFILE_KEY, JSON.stringify(data))
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
       this.profile = data
+      this.error = error
+      this.toggleLoading()
     },
+    async logout () {
+      this.toggleLoading()
+      this.resetError()
 
-    reset(){
-      localStorage.removeItem(AUTH_PROFILE_KEY)
-      this.loginError = null
-      this.checkProfileError = null
-      this.profile = null
+      const url = router.generate('auth_logout')
+      const api = useApiClient()
+
+      const { error } = await api<Profile>(url)
+
+      this.profile = undefined
+      this.error = error
+
+      this.toggleLoading()
     },
+    async refreshToken () {
+      this.toggleLoading()
+      this.resetError()
 
-    toggleLoading(){
-      const layout = useLayoutStore()
-      layout.toggleLoading()
+      const api = useApiClient()
+      const url = router.generate('auth_refresh_token')
+      const { data, error } = await api<Profile>(url)
+
+      this.profile = data
+      this.error = error
     }
   }
 })
-
-// storeHMRUpdate(useAuthStore)
-

@@ -1,28 +1,21 @@
 <template>
-  <div>
-    <AppSidebar/>
-    <div class="wrapper d-flex flex-column min-vh-100 bg-light">
-      <AppHeader />
-      <div class="body flex-grow-1 px-3">
-        <CContainer lg>
-          <Alert/>
-          <NuxtPage />
-        </CContainer>
-      </div>
-      <AppFooter />
-    </div>
-  </div>
+  <v-app theme="light" class="bg-grey-lighten-4">
+    <AppSidebar />
+    <v-main>
+      <transition>
+        <v-container fluid>
+          <v-row dense>
+            <v-col cols="12">
+              <ProgressOverlay />
+              <slot />
+            </v-col>
+          </v-row>
+        </v-container>
+      </transition>
+    </v-main>
+  </v-app>
 </template>
-<script lang="ts">
-import AppSidebar from "~/components/ui/AppSidebar.vue"
-import AppHeader from "~/components/ui/AppHeader.vue"
-import AppFooter from "~/components/ui/AppFooter.vue"
-import Alert from "~/components/ui/Alert.vue"
-export default defineComponent({
-  name: 'DefaultLayout',
-  components: {AppFooter, AppHeader, AppSidebar, Alert}
-})
+<script setup lang="ts">
+import AppSidebar from '~/components/ui/AppSidebar.vue'
+import ProgressOverlay from '~/components/ui/ProgressOverlay.vue'
 </script>
-<style>
-
-</style>

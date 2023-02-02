@@ -1,15 +1,14 @@
-<template>
-  <div>
-    Logout Placeholder
-  </div>
-</template>
+<script lang="ts" setup>
+import { useAuthStore } from '~/stores/auth'
 
-<script>
-export default {
-  name: "Logout"
-}
+onMounted(async () => {
+  const store = useAuthStore()
+  watchLoading(computed(() => store.loading))
+  await store.logout()
+  await navigateTo('/login')
+})
+
 </script>
-
-<style scoped>
-
-</style>
+<template>
+  <div />
+</template>

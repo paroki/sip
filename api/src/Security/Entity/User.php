@@ -13,7 +13,6 @@ namespace SIP\Security\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata as Api;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -29,24 +28,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[Api\ApiResource(
-    shortName: 'user',
-    operations: [
-        new Api\GetCollection(),
-        new Api\Post(
-            security: "is_granted('ROLE_ADMIN')",
-            processor: UserPasswordHasher::class,
-        ),
-        new Api\Get(),
-        new Api\Put(processor: UserPasswordHasher::class),
-        new Api\Patch(processor: UserPasswordHasher::class),
-        new Api\Delete(
-            controller: DeleteController::class
-        ),
-    ],
     normalizationContext: ['groups' => ['user:read']],
     denormalizationContext: ['groups' => ['user:create', 'user:update']],
+    mercure: true,
+
 )]
-#[Api\ApiFilter(OrderFilter::class, properties: ['nama' => 'asc'], arguments: ['orderParameterName' => 'sort'])]
+#[Api\GetCollection]
+#[Api\Post(
+    security: "is_granted('ROLE_ADMIN')",
+    processor: UserPasswordHasher::class,
+)]
+#[Api\Get]
+#[Api\Put(processor: UserPasswordHasher::class)]
+#[Api\Patch(processor: UserPasswordHasher::class)]
+#[Api\Delete(controller: DeleteController::class)]
+#[Api\ApiFilter(OrderFilter::class, properties: ['nama' => 'ASC'], arguments: ['orderParameterName' => 'sort'])]
 #[Api\ApiFilter(BooleanFilter::class, properties: ['active'])]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'scr_user')]
@@ -74,6 +70,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank]
     #[Assert\Email]
     #[Groups(['user:read', 'user:create', 'user:update'])]
+    /**
+     * Email user
+     */
     private ?string $email = null;
 
     #[ORM\Column()]
@@ -81,6 +80,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 100, nullable: true)]
     #[Groups(['user:read', 'user:create', 'user:update'])]
+    /**
+     * Nama lengkap
+     */
     private ?string $nama = null;
 
     #[Assert\NotBlank(groups: ['user:create'])]

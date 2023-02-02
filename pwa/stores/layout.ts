@@ -1,29 +1,22 @@
-import {defineStore} from "pinia"
-import {storeHMRUpdate} from "~/lib/common"
+
+export interface LayoutState {
+  loading: boolean
+  rail: boolean
+  drawer: boolean
+}
 
 export const useLayoutStore = defineStore('layout', {
-  state: () => ({
-    drawerOpen: true,
+  state: (): LayoutState => ({
     loading: false,
-    sidebarVisible: true,
-    sidebarUnfoldable: false,
-    routes: {}
+    rail: false,
+    drawer: true
   }),
-
   actions: {
-    toggleLoading(){
-      this.loading = !this.loading
+    setLoading (value: boolean) {
+      this.loading = value
     },
-    toggleSidebar(){
-      this.sidebarVisible = !this.sidebarVisible
-    },
-    toggleUnfoldable(){
-      this.sidebarUnfoldable = !this.sidebarUnfoldable
-    },
-    updateSidebarVisible(payload: boolean){
-      this.sidebarVisible = payload
+    toggleRail () {
+      this.rail = !this.rail
     }
   }
 })
-
-// storeHMRUpdate(useLayoutStore)

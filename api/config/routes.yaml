@@ -7,6 +7,12 @@ auth_login:
     options:
         expose: true
 
+auth_refresh_token:
+    path: /auth/refresh-token
+
+auth_logout:
+    path: /auth/logout
+
 security_controller:
     resource:
         path: ../src/Security/Controller/

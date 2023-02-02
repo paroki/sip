@@ -11,19 +11,25 @@
 
 namespace SIP\Security\Controller;
 
+use Nette\Utils\Json;
 use SIP\Security\SecurityConstant;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[AsController]
+// #[AsController]
 class LogoutController
 {
-    #[Route(path: '/auth/logout', name: 'auth_logout', methods: 'GET')]
-    public function index(): Response
+    // #[Route(path: '/auth/logout', name: 'auth_logout', methods: 'GET')]
+    public function index(): JsonResponse
     {
-        $response = new Response();
+        $response = new JsonResponse([
+            'message' => 'Anda berhasil keluar dari aplikasi SIP',
+        ]);
         $response->headers->clearCookie(SecurityConstant::BEARER_COOKIE);
+        $response->headers->clearCookie("refresh_token");
+        $response->headers->clearCookie("REFRESH_TOKEN");
 
         return $response;
     }

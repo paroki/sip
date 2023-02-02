@@ -1,5 +1,7 @@
 <template>
-  <div class="bg-light min-vh-100 d-flex flex-row align-items-center">
-    <NuxtPage/>
-  </div>
+  <v-app id="inspire">
+    <v-main>
+      <slot />
+    </v-main>
+  </v-app>
 </template>

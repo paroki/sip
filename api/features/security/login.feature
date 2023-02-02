@@ -26,7 +26,7 @@ Feature:
         Then the response status code should be 200
         And I should be logged in
         And the response should be in JSON
-        And the JSON node user_id should exist
+        And the JSON node id should exist
 
     Scenario: Verify Token
         Given I have signed in with email "test@example.com" and password "test"

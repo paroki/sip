@@ -12,13 +12,18 @@
 namespace SIP\Tests\Behat;
 
 use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Api\UrlGeneratorInterface;
+use ApiPlatform\Operation\PathSegmentNameGeneratorInterface;
+use ApiPlatform\Symfony\Routing\SkolemIriConverter;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use SIP\Core\SingularPathSegmentNameGenerator;
 use SIP\Security\Entity\User;
 use SIP\Security\Repository\UserRepository;
 use SIP\Tests\Behat\Concerns\Rest;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class ResourceContext implements Context
@@ -26,18 +31,28 @@ class ResourceContext implements Context
     use Rest;
 
     private array $resourceMaps = [];
-    private IriConverterInterface $iriConverter;
     private EntityManagerInterface $em;
     private ?object $currentResource = null;
+    private UrlGeneratorInterface $urlGenerator;
+    private IriConverterInterface $iriConverter;
+    private SingularPathSegmentNameGenerator $segmentNameGenerator;
+
+    private array $createdResources = [];
 
     public function __construct(
+        SingularPathSegmentNameGenerator $segmentNameGenerator,
         IriConverterInterface $iriConverter,
+        UrlGeneratorInterface $urlGenerator,
+
         EntityManagerInterface $em,
         UserPasswordHasherInterface $hasher
     ) {
+        $this->urlGenerator = $urlGenerator;
         $this->iriConverter = $iriConverter;
-        $this->resourceMaps = include __DIR__.'/Resources/resource_maps.php';
+        $this->segmentNameGenerator = $segmentNameGenerator;
         $this->em           = $em;
+
+        $this->resourceMaps = $this->generateResourceMaps();
     }
 
     /**
@@ -61,6 +76,7 @@ class ResourceContext implements Context
      */
     public function iHaveResourceWith(string $name, PyStringNode $data): void
     {
+        $data = $this->patchData($data);
         $json = json_decode($data, true);
         $this->iHaveResource($name, $json);
     }
@@ -71,6 +87,7 @@ class ResourceContext implements Context
         $ob    = $this->updateResource($class, $data);
 
         $this->currentResource = $ob;
+        $this->createdResources[$name] = $ob;
 
         return $ob;
     }
@@ -92,14 +109,18 @@ class ResourceContext implements Context
      */
     public function iSendRequestTo($method, string $resource, ?PyStringNode $body=null)
     {
-        $url  = $resource;
+        $url  = "/".$resource;
         $rest = $this->restContext;
-        if ('/' === substr($resource, 0)) {
-            $class = $this->getResourceClass($resource);
-            // $url = $this->iriConverter->getIriFromResource(User::class);
-            $url = '/users';
+        if(null !== $body){
+            $body = $this->patchData($body);
         }
 
+        if ('/' !== substr($resource, 0)) {
+            $class = $this->getResourceClass($resource);
+            $r = new \ReflectionClass($class);
+            $segment = $this->segmentNameGenerator->getSegmentName($r->getShortName());
+            $url = $this->urlGenerator->generate('_api_/'.$segment.'{._format}_post');
+        }
         $rest->iAddHeaderEqualTo('Content-Type', 'application/json');
         $rest->iAddHeaderEqualTo('Accept', 'application/json');
         $rest->iSendARequestTo($method, $url, $body);
@@ -159,5 +180,35 @@ class ResourceContext implements Context
     public function waitForPageLoaded()
     {
         $this->minkContext->getSession()->wait(10000, "document.readyState === 'complete'");
+    }
+
+    private function generateResourceMaps(): array
+    {
+        $classes = $this->em->getConfiguration()->getMetadataDriverImpl()->getAllClassNames();
+        $segmentNameGenerator = $this->segmentNameGenerator;
+        $overrides = include __DIR__.'/Resources/resource_maps_override.php';
+        $maps = [];
+
+        foreach($classes as $class){
+            $r = new \ReflectionClass($class);
+            $segmentName = $segmentNameGenerator->getSegmentName($r->getShortName());
+            $maps[$segmentName] = $class;
+
+        }
+
+        return array_merge($maps, $overrides);
+    }
+
+    private function patchData(string $data): PyStringNode
+    {
+        foreach($this->createdResources as $name => $resource){
+            $method = 'getId';
+            if(method_exists($resource, $method)){
+                $id = call_user_func([$resource,$method]);
+                $search = "${name}.id";
+                $data = str_replace($search, "/$name/$id", $data);
+            }
+        }
+        return new PyStringNode([$data], 0);
     }
 }

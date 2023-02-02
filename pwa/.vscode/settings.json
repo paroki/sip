@@ -1,0 +1,5 @@
+{
+    "nuxt.isNuxtApp": false,
+    "tailwindCSS.codeActions": true,
+    "npm.packageManager": "pnpm"
+}

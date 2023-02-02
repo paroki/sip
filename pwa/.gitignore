@@ -1,5 +1,4 @@
 node_modules
-node-jiti
 *.log*
 .nuxt
 .nitro
@@ -7,4 +6,3 @@ node-jiti
 .output
 .env
 dist
-vendor

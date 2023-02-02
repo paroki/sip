@@ -11,16 +11,38 @@
 
 namespace SIP\Security\Subscriber;
 
+use Gesdinet\JWTRefreshTokenBundle\EventListener\LogoutEventListener;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
+use SIP\Security\Entity\User;
+use SIP\Security\SecurityConstant;
+use SIP\Security\UserProfileGenerator;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
+use Symfony\Component\Security\Http\Event\LogoutEvent;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\env;
+
 
 class JWTEventSubscriber implements EventSubscriberInterface
 {
+
+    private UserProfileGenerator $profileGenerator;
+
+    public function __construct(
+        UserProfileGenerator $profileGenerator
+    )
+    {
+        $this->profileGenerator = $profileGenerator;
+    }
+
     public static function getSubscribedEvents(): array
     {
         return [
             Events::AUTHENTICATION_SUCCESS => 'onAuthenticationSuccess',
+            LogoutEvent::class => 'onLogout'
         ];
     }
 
@@ -29,13 +51,30 @@ class JWTEventSubscriber implements EventSubscriberInterface
         $data = $event->getData();
 
         if (isset($data['token'])) {
-            /** @var \SIP\Security\Entity\User $user */
+            /** @var User $user */
             $user            = $event->getUser();
             $response        = $event->getResponse();
             $data            = json_decode($response->getContent(), true);
-            $data['user_id'] = $user->getId();
-
+            $data = array_merge($data, $this->profileGenerator->getProfileData($user));
+            $cookies = $response->headers->getCookies();
+            $expires = $cookies[1]->getExpiresTime();
+            $data['expiresAt'] = date_timestamp_set(
+                new \DateTime(),
+                $cookies[0]->getExpiresTime())
+                ->format('c')
+            ;
+            $data['refreshExpiresAt'] = date_timestamp_set(
+                new \DateTime(),
+                $expires)
+                ->format('c')
+            ;
             $event->setData($data);
         }
+    }
+
+    public function onLogout(LogoutEvent $event)
+    {
+        $cookie = $_ENV['COOKIE_BEARER'];
+        $event->getResponse()->headers->clearCookie($cookie);
     }
 }

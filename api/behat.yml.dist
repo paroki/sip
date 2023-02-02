@@ -10,7 +10,6 @@ default:
                 - behatch:context:json
                 - SIP\Tests\Behat\ResourceContext
                 - SIP\Tests\Behat\SecurityContext
-                - SIP\Tests\Behat\DemoContext
                 #- Paroki\Tests\Behat\UserContext
                 #- Paroki\Tests\Behat\ReferensiContext
 

@@ -1,0 +1,5 @@
+services:
+    SIP\Install\Command\:
+        resource: '%kernel.project_dir%/src/Install/Command/'
+        tags:
+            - { name: console.command }

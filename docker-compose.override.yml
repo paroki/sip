@@ -19,9 +19,6 @@ services:
     extra_hosts:
       # Ensure that host.docker.internal is correctly defined on Linux
       - host.docker.internal:host-gateway
-    ports:
-    - 9003
-    - 9000
 
   pwa:
     build:
@@ -30,10 +27,11 @@ services:
     volumes:
       - ./pwa:/srv/app
     environment:
-      API_PLATFORM_CREATE_CLIENT_ENTRYPOINT: http://caddy
-      API_PLATFORM_CREATE_CLIENT_OUTPUT: .
+      #API_PLATFORM_CREATE_CLIENT_ENTRYPOINT: http://caddy
+      #API_PLATFORM_CREATE_CLIENT_OUTPUT: .
       # On Linux, you may want to comment the following line for improved performance
       WATCHPACK_POLLING: true
+      NUXT_API_BASE_URL: "https://localhost"
     ports:
       - '3001:3001'
 
@@ -44,14 +42,14 @@ services:
     environment:
       MERCURE_EXTRA_DIRECTIVES: demo
 
-  pgadmin:
-    container_name: sip.pgadmin
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: 'siap@example.com'
-      PGADMIN_DEFAULT_PASSWORD: 'siap'
-    ports:
-      - '1080:80'
+  #pgadmin:
+  #  container_name: sip.pgadmin
+  #  image: dpage/pgadmin4
+  #  environment:
+  #    PGADMIN_DEFAULT_EMAIL: 'siap@example.com'
+  #    PGADMIN_DEFAULT_PASSWORD: 'siap'
+  #  ports:
+  #    - '1080:80'
   
   #chrome:
   #  container_name: sip.chrome

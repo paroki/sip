@@ -41,13 +41,13 @@ class ChangePasswordController
         $content            = $request->getContent();
         $data               = json_decode($content);
         $userRepository     = $this->userRepository;
-        $password        = $data->password;
-        $passwordConfirm = $data->passwordConfirm;
+        $password           = $data->password;
+        $passwordConfirm    = $data->passwordConfirm;
         $user               = null;
 
-        if(property_exists($data, 'id')){
+        if (property_exists($data, 'id')) {
             $id                 = $data->id;
-            $user = $userRepository->find($id);
+            $user               = $userRepository->find($id);
         }
 
         if ($password !== $passwordConfirm) {
@@ -56,14 +56,15 @@ class ChangePasswordController
             ], 422);
         }
 
-        if(null !== $user){
+        if (null !== $user) {
             $userRepository->upgradePassword($user, $password);
+
             return new JsonResponse([], 200);
         }
 
         return new JsonResponse([
-            "code" => "422",
-            "message" => "Unknown user to process",
+            'code' => '422',
+            'message' => 'Unknown user to process',
         ], 422);
     }
 }

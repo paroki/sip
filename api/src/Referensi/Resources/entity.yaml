@@ -1,0 +1,13 @@
+doctrine:
+    orm:
+        mappings:
+            Referensi:
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Referensi/Entity'
+                prefix: 'SIP\Referensi\Entity'
+                alias: Referensi
+
+api_platform:
+    mapping:
+        paths:
+            - '%kernel.project_dir%/src/Referensi/Entity'

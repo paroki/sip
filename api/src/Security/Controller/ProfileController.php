@@ -14,60 +14,33 @@ namespace SIP\Security\Controller;
 use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\GetCollection;
 use SIP\Security\Entity\User;
+use SIP\Security\UserProfileGenerator;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[AsController]
 class ProfileController
 {
-    private RoleHierarchyInterface $hierarchy;
-
-    private IriConverterInterface $iriConverter;
+    private UserProfileGenerator $profileGenerator;
 
     public function __construct(
-        RoleHierarchyInterface $hierarchy,
-        IriConverterInterface $iriConverter,
-        UrlGeneratorInterface $urlGenerator
-    ) {
-        // $foo = $urlGenerator->generate('user_get_collection');
-        $this->hierarchy    = $hierarchy;
-        $this->iriConverter = $iriConverter;
+        UserProfileGenerator $profileGenerator
+    )
+    {
+        $this->profileGenerator = $profileGenerator;
     }
 
     #[Route(path: '/auth/profile', name: 'auth_profile', methods: 'GET')]
     public function index(
-        UserInterface $user
-    ): JsonResponse {
-        $hierarchy = $this->hierarchy;
-        $roles     = $hierarchy->getReachableRoleNames($user->getRoles());
-        $routes    = $this->generateRoutes();
-        /* @var User $user */
-        return new JsonResponse([
-            'id' => $user->getId(),
-            'nama' => $user->getNama(),
-            // 'email' => $user->getEmail(),
-            'roles' => $roles,
-            'routes' => $routes,
-        ]);
-    }
-
-    private function generateRoutes()
+        #[CurrentUser]User $user
+    ): JsonResponse
     {
-        $iriConverter = $this->iriConverter;
-        $user         = $iriConverter->getIriFromResource(
-            User::class,
-            UrlGeneratorInterface::ABSOLUTE_PATH,
-            new GetCollection()
-        );
-
-        return [
-            'auth_login' => '/auth/login',
-            'auth_logout' => '/auth/logout',
-            'API_USER' => $user,
-        ];
+        return new JsonResponse($this->profileGenerator->getProfileData($user));
     }
 }

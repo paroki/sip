@@ -1,34 +1,20 @@
 <template>
-  <div class="p-8">
-    <h3 class="text-3xl">
-      Homepage
-    </h3>
-    {{ store.loggedIn ? "Logged In":"Not Logged IN" }}
-
-    <div class="inline-flex">
-      <button @click="logout">
-        Logout
-      </button>
-    </div>
+  <div>
+    <h3>Hello World</h3>
+    <v-btn color="primary" @click="logout">
+      Logout
+    </v-btn>
   </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import { useAuthStore } from '~/stores/auth'
+const store = useAuthStore()
 
-import { useAuthStore } from '~/stores'
+const loading = computed(() => store.loading)
+watchLoading(loading)
 
-export default {
-  name: 'IndexPage',
-  setup () {
-    const store = useAuthStore()
-    return {
-      store
-    }
-  },
-  methods: {
-    async logout () {
-      await this.store.logout()
-      await navigateTo('/login')
-    }
-  }
+const logout = async () => {
+  await store.logout()
+  await navigateTo('/login')
 }
 </script>

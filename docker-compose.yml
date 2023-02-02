@@ -29,10 +29,8 @@ services:
     build:
       context: ./pwa
       target: prod
-    environment:
-      NUXT_PUBLIC_ENTRYPOINT: http://caddy
-    volumes:
-    - ./api/vendor/friendsofsymfony/jsrouting-bundle/Resources/js:/srv/app/vendor/jsrouting-bundle
+    #environment:
+    #  NUXT_PUBLIC_ENTRYPOINT: http://caddy
 
   caddy:
     container_name: sip.caddy
