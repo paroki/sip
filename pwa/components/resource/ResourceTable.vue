@@ -3,8 +3,8 @@
 import type { StoreDefinition } from 'pinia'
 import { storeToRefs } from 'pinia'
 import type { Ref } from 'vue'
-import type { TableHeader, TableFilters, TableOrder } from '~/types'
 import AppError from '../ui/AppError.vue'
+import type { TableHeader, TableFilters, TableOrder } from '~/types'
 
 const props = defineProps<{
   storeDefinition: StoreDefinition,

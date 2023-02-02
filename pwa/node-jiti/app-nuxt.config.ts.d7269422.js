@@ -1,5 +1,5 @@
-"use strict";Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0; // https://nuxt.com/docs/api/configuration/nuxt-config
-var _default = defineNuxtConfig({
+'use strict'; Object.defineProperty(exports, '__esModule', { value: true }); exports.default = void 0 // https://nuxt.com/docs/api/configuration/nuxt-config
+const _default = defineNuxtConfig({
   ssr: false,
   router: {
     options: {
@@ -7,14 +7,14 @@ var _default = defineNuxtConfig({
     }
   },
   modules: [
-  [
-  '@pinia/nuxt',
-  {
-    disableVuex: true,
-    autoImports: ['defineStore']
-  }],
+    [
+      '@pinia/nuxt',
+      {
+        disableVuex: true,
+        autoImports: ['defineStore']
+      }],
 
-  '@vueuse/nuxt'],
+    '@vueuse/nuxt'],
 
   vite: {
     server: {
@@ -24,14 +24,14 @@ var _default = defineNuxtConfig({
     }
   },
   css: [
-  'vuetify/lib/styles/main.sass',
-  '@mdi/font/css/materialdesignicons.min.css',
-  'roboto-fontface/css/roboto/roboto-fontface.css',
-  '~/assets/sass/main.scss'],
+    'vuetify/lib/styles/main.sass',
+    '@mdi/font/css/materialdesignicons.min.css',
+    'roboto-fontface/css/roboto/roboto-fontface.css',
+    '~/assets/sass/main.scss'],
 
   build: {
     transpile: [
-    'vuetify']
+      'vuetify']
 
   }
-});exports.default = _default; /* v7-46b32e92a188746d */
+}); exports.default = _default /* v7-46b32e92a188746d */

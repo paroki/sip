@@ -1,20 +1,20 @@
 import { useAuthStore } from '~~/stores/auth'
 
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware((to) => {
   const publics = ['/login', '/logout']
 
-  if(publics.includes(to.path)) return
+  if (publics.includes(to.path)) { return }
 
   const store = useAuthStore()
 
-  if(!store.authenticated){
+  if (!store.authenticated) {
     navigateTo('/login')
   }
 
   // try to use refresh token first
-  if(store.tokenExpired && !store.refreshTokenExpired){
+  if (store.tokenExpired && !store.refreshTokenExpired) {
     store.refreshToken()
   }
 
-  if(store.tokenExpired) return navigateTo('/login')
+  if (store.tokenExpired) { return navigateTo('/login') }
 })

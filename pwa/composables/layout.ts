@@ -1,4 +1,4 @@
-import { useLayoutStore } from '~~/stores/layout';
+import { useLayoutStore } from '~~/stores/layout'
 
 export const watchLoading = (loading: ComputedRef<boolean>) => {
   watch(loading, () => {

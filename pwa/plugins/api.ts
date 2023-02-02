@@ -4,5 +4,5 @@ export default defineNuxtPlugin(async () => {
   const core = useApiCore()
   core.options.entrypoint = 'https://localhost'
 
-  loadRoutingData()
+  await loadRoutingData()
 })

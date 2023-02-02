@@ -6,7 +6,7 @@ defineProps<{
 </script>
 <template>
   <v-alert
-    v-if="error"
+    v-if="error?.data?.code"
     variant="outlined"
     :title="error.data.code"
     :text="error.data.message"

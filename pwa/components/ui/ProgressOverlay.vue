@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useLayoutStore } from '~~/stores/layout';
+import { useLayoutStore } from '~~/stores/layout'
 
 const store = useLayoutStore()
 

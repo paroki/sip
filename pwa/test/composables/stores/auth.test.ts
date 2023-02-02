@@ -27,11 +27,17 @@ describe('useAuthStore', () => {
 
     expect(store.profile).toStrictEqual(initial)
 
-    await store.login('test', 'test')
+    await store.login({
+      email: 'test@example.com',
+      password: 'test'
+    })
     expect(store.error).toBe('some-error')
     expect(api).toBeCalledWith('/auth/login', {
       method: 'POST',
-      payload: { email: 'test', password: 'test' }
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email: 'test@example.com', password: 'test' })
     })
   })
 
@@ -52,7 +58,7 @@ describe('useAuthStore', () => {
     expect(store.loading).toBeFalsy()
   })
 
-  it('tokenExpired true if token has expired', async () => {
+  it('tokenExpired true if token has expired', () => {
     const store = useAuthStore()
     expect(store.tokenExpired).toBeTruthy()
     profile.expiresAt = dayjs().subtract(60, 'hour').toISOString()
@@ -60,7 +66,7 @@ describe('useAuthStore', () => {
     expect(store.tokenExpired).toBeTruthy()
   })
 
-  it('tokenExpired false if token not expired', async () => {
+  it('tokenExpired false if token not expired', () => {
     const store = useAuthStore()
     profile.expiresAt = dayjs().add(1, 'hour').toISOString()
     store.profile = profile
@@ -68,7 +74,7 @@ describe('useAuthStore', () => {
     expect(store.tokenExpired).toBeFalsy()
   })
 
-  it('refreshTokenExpired true if expired', async () => {
+  it('refreshTokenExpired true if expired', () => {
     const store = useAuthStore()
     expect(store.refreshTokenExpired).toBeTruthy()
     profile.refreshExpiresAt = dayjs().subtract(2, 'days').toISOString()
@@ -76,7 +82,7 @@ describe('useAuthStore', () => {
     expect(store.refreshTokenExpired).toBeTruthy()
   })
 
-  it('refreshTokenExpired false if not expired', async () => {
+  it('refreshTokenExpired false if not expired', () => {
     const store = useAuthStore()
     profile.refreshExpiresAt = dayjs().add(30, 'days').toISOString()
     store.profile = profile
@@ -84,7 +90,7 @@ describe('useAuthStore', () => {
     expect(store.refreshTokenExpired).toBeFalsy()
   })
 
-  it('refreshToken should get token from server', async () => {
+  it('refreshToken should get token from server', () => {
     const retVal = {
       data: 'some-profile',
       error: 'some-error'

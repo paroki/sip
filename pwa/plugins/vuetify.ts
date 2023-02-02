@@ -7,7 +7,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   const vuetify = createVuetify({
     components: {
       ...components,
-      VDataTableServer,
+      VDataTableServer
     },
     directives
   })

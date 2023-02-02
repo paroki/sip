@@ -1,9 +1,8 @@
 import type { ApiResponseError } from '@doyolabs/api-client-core'
-import { useApi, useApiClient } from '@doyolabs/api-client-core'
+import { useApiClient } from '@doyolabs/api-client-core'
 import { defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
 import dayjs from 'dayjs'
-import { m } from 'vitest/dist/types-aac763a5'
 import { router } from '~/composables'
 
 export interface Profile {

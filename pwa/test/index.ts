@@ -1,5 +1,5 @@
-import { createPinia, setActivePinia } from 'pinia'
 import { readFileSync } from 'node:fs'
+import { createPinia, setActivePinia } from 'pinia'
 import { createApp } from 'vue'
 import { vi } from 'vitest'
 
@@ -8,19 +8,19 @@ export function loadJsonFixtures (file: string) {
   return JSON.parse(json.toString())
 }
 
-export function mockPiniaStart(){
+export function mockPiniaStart () {
   const pinia = createPinia()
   const app = createApp({})
   app.use(pinia)
   setActivePinia(pinia)
 }
 
-export async function mockLocalStorage(initValue: any){
+export async function mockLocalStorage (initValue: any) {
   const s = await import('@vueuse/core')
   s.useLocalStorage = vi.fn().mockReturnValue(initValue)
 }
 
-export async function mockApiClient(returnValue: any){
+export async function mockApiClient (returnValue: any) {
   vi.mock('@doyolabs/api-client-core')
   const api = vi.fn().mockResolvedValue(returnValue)
   const m = await import('@doyolabs/api-client-core')

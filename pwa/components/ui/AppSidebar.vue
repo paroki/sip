@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, Ref } from 'vue'
+import { computed } from 'vue'
 import { useLayoutStore } from '~/stores/layout'
 
 const store = useLayoutStore()
