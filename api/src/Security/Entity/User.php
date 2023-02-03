@@ -42,7 +42,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Api\Put(processor: UserPasswordHasher::class)]
 #[Api\Patch(processor: UserPasswordHasher::class)]
 #[Api\Delete(controller: DeleteController::class)]
-#[Api\ApiFilter(OrderFilter::class, properties: ['nama' => 'ASC'], arguments: ['orderParameterName' => 'sort'])]
+#[Api\ApiFilter(OrderFilter::class, properties: ['nama' => 'ASC', 'email' => 'ASC'], arguments: ['orderParameterName' => 'sort'])]
 #[Api\ApiFilter(BooleanFilter::class, properties: ['active'])]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'scr_user')]

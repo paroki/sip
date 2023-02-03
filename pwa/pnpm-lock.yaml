@@ -13,6 +13,7 @@ specifiers:
   '@volar-plugins/vetur': ^0.1.0
   '@vueuse/core': ^9.12.0
   '@vueuse/nuxt': ^9.12.0
+  chalk: ^5.2.0
   dayjs: ^1.11.7
   eslint: ^8.33.0
   eslint-plugin-jsdoc: ^39.7.5
@@ -52,6 +53,7 @@ devDependencies:
   '@volar-plugins/vetur': 0.1.0
   '@vueuse/core': 9.12.0_vue@3.2.45
   '@vueuse/nuxt': 9.12.0_nuxt@3.1.1+vue@3.2.45
+  chalk: 5.2.0
   eslint: 8.33.0
   eslint-plugin-jsdoc: 39.7.5_eslint@8.33.0
   hookable: 5.4.2
