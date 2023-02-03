@@ -11,17 +11,19 @@
 
 namespace SIP\Security\Controller;
 
+use SIP\Security\Entity\User;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 #[AsController]
 class CheckTokenController
 {
     #[Route(path: '/auth/check', name: 'auth_check_token', methods: 'GET')]
-    public function checkToken(UserInterface $user): JsonResponse
-    {
+    public function checkToken(
+      #[CurrentUser] User $user
+    ): JsonResponse {
         /* @var \SIP\Security\Entity\User $user */
         return new JsonResponse([
             'id' => $user->getId(),

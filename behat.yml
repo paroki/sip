@@ -8,7 +8,6 @@ default:
         - Behat\MinkExtension\Context\MinkContext
         - behatch:context:rest
         - behatch:context:json
-        - SIP\Tests\Behat\CoverageContext
         - SIP\Tests\Behat\ResourceContext
         - SIP\Tests\Behat\SecurityContext
         #- Paroki\Tests\Behat\UserContext
@@ -38,3 +37,15 @@ default:
     #FriendsOfBehat\MinkDebugExtension:
     #    directory: build/behat
     #    screenshot: true
+
+coverage:
+  suites:
+    default: &coverage-suite
+      contexts:
+        - Behat\MinkExtension\Context\MinkContext
+        - behatch:context:rest
+        - behatch:context:json
+        - SIP\Tests\Behat\ResourceContext
+        - SIP\Tests\Behat\SecurityContext
+        - SIP\Tests\Behat\CoverageContext
+

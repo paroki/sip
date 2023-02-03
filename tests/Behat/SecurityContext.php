@@ -13,7 +13,6 @@ namespace SIP\Tests\Behat;
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
-use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use SIP\Security\Entity\User;
 use SIP\Security\SecurityConstant;
 use SIP\Tests\Behat\Concerns\ResourceContext;
@@ -25,14 +24,6 @@ class SecurityContext implements Context
 {
     use ResourceContext;
     use Rest;
-
-    private JWTEncoderInterface $jwtEncoder;
-
-    public function __construct(
-        JWTEncoderInterface $jwtEncoder
-    ) {
-        $this->jwtEncoder = $jwtEncoder;
-    }
 
     /**
      * @Given I sign in with :email and password :password

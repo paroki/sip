@@ -7,6 +7,10 @@ on:
   pull_request: ~
   workflow_dispatch: ~
 
+env:
+  DATABASE_URL: postgres://sip:sip@localhost/sip
+  PGPASSWORD: sip
+
 jobs:
   php-cs-fixer:
     name: PHP-cs-fixer (PHP ${{ matrix.php }})
@@ -15,7 +19,7 @@ jobs:
     strategy:
       matrix:
         php:
-          - '8.1'
+          - "8.1"
       fail-fast: false
     steps:
       - name: Checkout
@@ -31,6 +35,56 @@ jobs:
       - name: Run PHP-CS-Fixer fix
         run: php-cs-fixer fix --dry-run --diff --ansi
 
+  phpstan:
+    name: PHPStan (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        php:
+          - '8.1'
+      fail-fast: false
+    env:
+      APP_DEBUG: '1' # https://github.com/phpstan/phpstan-symfony/issues/37
+      SYMFONY_PHPUNIT_VERSION: '9.5'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: pecl, composer
+          extensions: intl, bcmath, curl, openssl, mbstring
+          coverage: none
+          ini-values: memory_limit=-1
+      - name: Get composer cache directory
+        id: composercache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composercache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Update project dependencies
+        run: composer update --no-interaction --no-progress --ansi
+      - name: Cache PHPStan results
+        uses: actions/cache@v2
+        with:
+          path: /tmp/phpstan
+          key: phpstan-php${{ matrix.php }}-${{ github.sha }}
+          restore-keys: |
+            phpstan-php${{ matrix.php }}-
+            phpstan-
+        continue-on-error: true
+      - name: Run PHPStan analysis
+        env:
+          SYMFONY_PHPUNIT_VERSION: '9.5'
+        run: |
+          ./vendor/bin/phpstan --version
+          ./vendor/bin/phpstan analyse --no-interaction --no-progress --ansi
+
   behat:
     name: Behat (PHP ${{ matrix.php }})
     runs-on: ubuntu-latest
@@ -38,17 +92,23 @@ jobs:
     strategy:
       matrix:
         php:
-          - '8.1'
-          - '8.2'
+          - "8.1"
+          - "8.2"
         include:
-          - php: '8.1'
+          - php: "8.1"
             coverage: true
-          - php: '8.2'
+          - php: "8.2"
             coverage: true
       fail-fast: false
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Setup postgres
+        run: |
+          sudo systemctl start postgresql
+          sudo -u postgres psql -d template1 -c "CREATE USER sip WITH PASSWORD 'sip' CREATEDB"
+          createdb -h localhost -p 5432 -U sip sip
+          pg_isready -d sip -h localhost -p 5432 -U sip
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -71,11 +131,16 @@ jobs:
         run: echo "COVERAGE=1" >> $GITHUB_ENV
       - name: Update project dependencies
         run: composer update --no-interaction --no-progress --ansi
+      - name: Preparing database
+        run: |
+          bin/console lexik:jwt:generate-keypair
+          bin/console doctrine:database:create --env=test
+          bin/console doctrine:schema:create --env=test
       - name: Run Behat tests
         run: |
           mkdir -p build/logs/behat
           if [ "$COVERAGE" = '1' ]; then
-            vendor/bin/behat --out=std --format=progress --format=junit --out=build/logs/behat/junit --profile=default-coverage --no-interaction
+            vendor/bin/behat --out=std --format=progress --format=junit --out=build/logs/behat/junit --profile=coverage --no-interaction
           else
             vendor/bin/behat --out=std --format=progress --format=junit --out=build/logs/behat/junit --profile=default --no-interaction
           fi
