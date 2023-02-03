@@ -10,19 +10,18 @@
  */
 
 namespace SIP\Referensi\Entity;
+
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Metadata as Api;
-
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata as Api;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
-use cebe\openapi\spec\PathItem;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use SIP\Security\Entity\User;
 use Symfony\Bridge\Doctrine\Types\UuidType;
-use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -41,7 +40,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             routeName: 'keuskupan_select',
             normalizationContext: ['groups' => 'select'],
             name: 'keuskupan_select'
-        )
+        ),
     ],
     normalizationContext: ['groups' => ['read', 'select']],
     denormalizationContext: ['groups' => ['write']]
@@ -86,7 +85,7 @@ class Keuskupan
     private ?string $alamat = null;
 
     /**
-     * Kabupaten/Kota Keuskupan
+     * Kabupaten/Kota Keuskupan.
      */
     #[ORM\Column(length: 50, nullable: true)]
     #[Groups(['read', 'write'])]
@@ -121,245 +120,164 @@ class Keuskupan
     #[Groups(['read'])]
     private ?User $updatedBy = null;
 
-    /**
-     * @return string|null
-     */
     public function getId(): ?string
     {
         return $this->id;
     }
 
-    /**
-     * @return string|null
-     */
     public function getKode(): ?string
     {
         return $this->kode;
     }
 
-    /**
-     * @param string|null $kode
-     * @return Keuskupan
-     */
-    public function setKode(?string $kode): Keuskupan
+    public function setKode(?string $kode): self
     {
         $this->kode = $kode;
+
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getNomor(): int
     {
         return $this->nomor;
     }
 
-    /**
-     * @param int $nomor
-     * @return Keuskupan
-     */
-    public function setNomor(int $nomor): Keuskupan
+    public function setNomor(int $nomor): self
     {
         $this->nomor = $nomor;
+
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getNama(): ?string
     {
         return $this->nama;
     }
 
-    /**
-     * @param string|null $nama
-     * @return Keuskupan
-     */
-    public function setNama(?string $nama): Keuskupan
+    public function setNama(?string $nama): self
     {
         $this->nama = $nama;
+
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getNamaLatin(): ?string
     {
         return $this->namaLatin;
     }
 
-    /**
-     * @param string|null $namaLatin
-     * @return Keuskupan
-     */
-    public function setNamaLatin(?string $namaLatin): Keuskupan
+    public function setNamaLatin(?string $namaLatin): self
     {
         $this->namaLatin = $namaLatin;
+
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getAlamat(): ?string
     {
         return $this->alamat;
     }
 
-    /**
-     * @param string|null $alamat
-     * @return Keuskupan
-     */
-    public function setAlamat(?string $alamat): Keuskupan
+    public function setAlamat(?string $alamat): self
     {
         $this->alamat = $alamat;
+
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getKota(): ?string
     {
         return $this->kota;
     }
 
-    /**
-     * @param string|null $kota
-     * @return Keuskupan
-     */
-    public function setKota(?string $kota): Keuskupan
+    public function setKota(?string $kota): self
     {
         $this->kota = $kota;
+
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getTelepon(): ?string
     {
         return $this->telepon;
     }
 
-    /**
-     * @param string|null $telepon
-     * @return Keuskupan
-     */
-    public function setTelepon(?string $telepon): Keuskupan
+    public function setTelepon(?string $telepon): self
     {
         $this->telepon = $telepon;
+
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFax(): ?string
     {
         return $this->fax;
     }
 
-    /**
-     * @param string|null $fax
-     * @return Keuskupan
-     */
-    public function setFax(?string $fax): Keuskupan
+    public function setFax(?string $fax): self
     {
         $this->fax = $fax;
+
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getWebsite(): ?string
     {
         return $this->website;
     }
 
-    /**
-     * @param string|null $website
-     * @return Keuskupan
-     */
-    public function setWebsite(?string $website): Keuskupan
+    public function setWebsite(?string $website): self
     {
         $this->website = $website;
+
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    /**
-     * @param string|null $email
-     * @return Keuskupan
-     */
-    public function setEmail(?string $email): Keuskupan
+    public function setEmail(?string $email): self
     {
         $this->email = $email;
+
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getUskup(): ?string
     {
         return $this->uskup;
     }
 
-    /**
-     * @param string|null $uskup
-     * @return Keuskupan
-     */
-    public function setUskup(?string $uskup): Keuskupan
+    public function setUskup(?string $uskup): self
     {
         $this->uskup = $uskup;
+
         return $this;
     }
 
-    /**
-     * @return \DateTimeImmutable
-     */
     public function getUpdatedAt(): \DateTimeImmutable
     {
         return $this->updatedAt;
     }
 
-    /**
-     * @param \DateTimeImmutable $updatedAt
-     * @return Keuskupan
-     */
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): Keuskupan
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
         return $this;
     }
 
-    /**
-     * @return User|null
-     */
     public function getUpdatedBy(): ?User
     {
         return $this->updatedBy;
     }
 
-    /**
-     * @param User|null $updatedBy
-     * @return Keuskupan
-     */
-    public function setUpdatedBy(?User $updatedBy): Keuskupan
+    public function setUpdatedBy(?User $updatedBy): self
     {
         $this->updatedBy = $updatedBy;
+
         return $this;
     }
 }

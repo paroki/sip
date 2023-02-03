@@ -1,10 +1,18 @@
 <?php
 
+/*
+ * This file is part of the SIP project.
+ *
+ * (c) 2023 SIP Developer Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace SIP\Security;
 
 use SIP\Security\Entity\User;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class UserProfileGenerator
 {
@@ -12,8 +20,7 @@ class UserProfileGenerator
 
     public function __construct(
         RoleHierarchyInterface $hierarchy,
-    )
-    {
+    ) {
         $this->hierarchy = $hierarchy;
     }
 

@@ -31,7 +31,6 @@ use Symfony\Component\Validator\Constraints as Assert;
     normalizationContext: ['groups' => ['user:read']],
     denormalizationContext: ['groups' => ['user:create', 'user:update']],
     mercure: true,
-
 )]
 #[Api\GetCollection]
 #[Api\Post(
@@ -71,7 +70,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Email]
     #[Groups(['user:read', 'user:create', 'user:update'])]
     /**
-     * Email user
+     * Email user.
      */
     private ?string $email = null;
 
@@ -81,7 +80,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 100, nullable: true)]
     #[Groups(['user:read', 'user:create', 'user:update'])]
     /**
-     * Nama lengkap
+     * Nama lengkap.
      */
     private ?string $nama = null;
 

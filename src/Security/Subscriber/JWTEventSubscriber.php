@@ -11,30 +11,20 @@
 
 namespace SIP\Security\Subscriber;
 
-use Gesdinet\JWTRefreshTokenBundle\EventListener\LogoutEventListener;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
 use SIP\Security\Entity\User;
-use SIP\Security\SecurityConstant;
 use SIP\Security\UserProfileGenerator;
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Symfony\Component\Security\Http\Event\LogoutEvent;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\env;
-
 
 class JWTEventSubscriber implements EventSubscriberInterface
 {
-
     private UserProfileGenerator $profileGenerator;
 
     public function __construct(
         UserProfileGenerator $profileGenerator
-    )
-    {
+    ) {
         $this->profileGenerator = $profileGenerator;
     }
 
@@ -42,7 +32,7 @@ class JWTEventSubscriber implements EventSubscriberInterface
     {
         return [
             Events::AUTHENTICATION_SUCCESS => 'onAuthenticationSuccess',
-            LogoutEvent::class => 'onLogout'
+            LogoutEvent::class => 'onLogout',
         ];
     }
 
@@ -52,22 +42,20 @@ class JWTEventSubscriber implements EventSubscriberInterface
 
         if (isset($data['token'])) {
             /** @var User $user */
-            $user            = $event->getUser();
-            $response        = $event->getResponse();
-            $data            = json_decode($response->getContent(), true);
-            $data = array_merge($data, $this->profileGenerator->getProfileData($user));
-            $cookies = $response->headers->getCookies();
-            $expires = $cookies[1]->getExpiresTime();
+            $user              = $event->getUser();
+            $response          = $event->getResponse();
+            $data              = json_decode($response->getContent(), true);
+            $data              = array_merge($data, $this->profileGenerator->getProfileData($user));
+            $cookies           = $response->headers->getCookies();
+            $expires           = $cookies[1]->getExpiresTime();
             $data['expiresAt'] = date_timestamp_set(
                 new \DateTime(),
                 $cookies[0]->getExpiresTime())
-                ->format('c')
-            ;
+                ->format('c');
             $data['refreshExpiresAt'] = date_timestamp_set(
                 new \DateTime(),
                 $expires)
-                ->format('c')
-            ;
+                ->format('c');
             $event->setData($data);
         }
     }

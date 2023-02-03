@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the SIP project.
+ *
+ * (c) 2023 SIP Developer Team
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace SIP\Install\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,16 +25,16 @@ class ImportData extends Command
     public function __construct(
         EntityManagerInterface $em,
         KeuskupanFixture $keuskupan
-    )
-    {
-        $this->em = $em;
+    ) {
+        $this->em        = $em;
         $this->keuskupan = $keuskupan;
-        parent::__construct("sip:install");
+        parent::__construct('sip:install');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->keuskupan->start();
+
         return Command::SUCCESS;
     }
 }
