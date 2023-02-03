@@ -7,6 +7,10 @@ on:
   pull_request: ~
   workflow_dispatch: ~
 
+env:
+  DATABASE_URL: postgres://sip:sip@localhost/sip
+  PGPASSWORD: sip
+
 jobs:
   php-cs-fixer:
     name: PHP-cs-fixer (PHP ${{ matrix.php }})
@@ -15,7 +19,7 @@ jobs:
     strategy:
       matrix:
         php:
-          - '8.1'
+          - "8.1"
       fail-fast: false
     steps:
       - name: Checkout
@@ -38,17 +42,23 @@ jobs:
     strategy:
       matrix:
         php:
-          - '8.1'
-          - '8.2'
+          - "8.1"
+          - "8.2"
         include:
-          - php: '8.1'
+          - php: "8.1"
             coverage: true
-          - php: '8.2'
+          - php: "8.2"
             coverage: true
       fail-fast: false
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Setup postgres
+        run: |
+          sudo systemctl start postgresql
+          sudo -u postgres psql -d template1 -c "CREATE USER sip WITH PASSWORD 'sip' CREATEDB"
+          createdb -h localhost -p 5432 -U sip sip
+          pg_isready -d sip -h localhost -p 5432 -U sip
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
