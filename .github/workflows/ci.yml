@@ -6,7 +6,7 @@ on:
       - main
       - ci
   #pull_request: ~
-  #workflow_dispatch: ~
+  workflow_dispatch: ~
 
 jobs:
   php-cs-fixer:
