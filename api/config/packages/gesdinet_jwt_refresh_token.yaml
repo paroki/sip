@@ -1,0 +1,15 @@
+gesdinet_jwt_refresh_token:
+  refresh_token_class: SIP\Security\Entity\RefreshToken
+  ttl: 2592000 # 1 month
+  token_parameter_name: "%env(COOKIE_REFRESH_TOKEN)%"
+  return_expiration: true
+  return_expiration_parameter_name: expiresAt
+  logout_firewall: main
+  cookie:
+    enabled: true
+    same_site: lax # default value
+    path: / # default value
+    domain: null # default value
+    http_only: true # default value
+    secure: true # default value
+    remove_token_from_body: true # default value

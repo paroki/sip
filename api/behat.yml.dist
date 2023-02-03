@@ -1,0 +1,40 @@
+default:
+  gherkin:
+    filters:
+      tags: "~@ui"
+  suites:
+    default:
+      contexts:
+        - Behat\MinkExtension\Context\MinkContext
+        - behatch:context:rest
+        - behatch:context:json
+        - SIP\Tests\Behat\ResourceContext
+        - SIP\Tests\Behat\SecurityContext
+
+  extensions:
+    FriendsOfBehat\SymfonyExtension:
+      bootstrap: tests/bootstrap.php
+      kernel:
+        class: SIP\Kernel
+        environment: test
+        debug: true
+    Behat\MinkExtension:
+      base_url: "http://localhost/"
+      files_path: "features/files"
+      default_session: symfony
+      sessions:
+        symfony:
+          symfony: ~
+    Behatch\Extension: ~
+
+
+coverage:
+  suites:
+    default: &coverage-suite
+      contexts:
+        - Behat\MinkExtension\Context\MinkContext
+        - behatch:context:rest
+        - behatch:context:json
+        - SIP\Tests\Behat\ResourceContext
+        - SIP\Tests\Behat\SecurityContext
+        - SIP\Tests\Behat\CoverageContext
