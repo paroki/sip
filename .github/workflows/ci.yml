@@ -72,7 +72,7 @@ jobs:
       - name: Update project dependencies
         run: composer update --no-interaction --no-progress --ansi
       - name: Preparing database
-        run |
+        run: |
           bin/console doctrine:database:create
           bin/console doctrine:schema:create
       - name: Run Behat tests
