@@ -13,13 +13,12 @@ namespace SIP\Tests\Behat;
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
-
-use function PHPUnit\Framework\assertNotNull;
-
 use SIP\Security\Entity\User;
 use SIP\Security\SecurityConstant;
 use SIP\Tests\Behat\Concerns\ResourceContext;
 use SIP\Tests\Behat\Concerns\Rest;
+
+use function PHPUnit\Framework\assertNotNull;
 
 class SecurityContext implements Context
 {

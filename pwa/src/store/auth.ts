@@ -44,7 +44,7 @@ export const useAuthStore = defineStore('auth', {
       const expiry = dayjs(profile.expiresAt).subtract(5, 'minute')
 
       console.log(expiry.diff(dayjs(), 'minute'))
-      return expiry.diff(dayjs(), 'minute') <= 0
+      return expiry.isBefore(dayjs())
     },
     refreshTokenExpired: ({ profile }) => {
       if (!profile?.refreshExpiresAt) return true
