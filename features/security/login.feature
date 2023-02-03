@@ -7,8 +7,8 @@ Feature:
     Given I have user resource with:
       """
       {
-        "nama": "Test User",
         "email": "test@example.com",
+        "nama": "Test User",
         "plainPassword": "test"
       }
       """
