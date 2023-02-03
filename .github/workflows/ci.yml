@@ -84,8 +84,8 @@ jobs:
       - name: Preparing database
         run: |
           bin/console lexik:jwt:generate-keypair
-          bin/console doctrine:database:create
-          bin/console doctrine:schema:create
+          bin/console doctrine:database:create --env=test
+          bin/console doctrine:schema:create --env=test
       - name: Run Behat tests
         run: |
           mkdir -p build/logs/behat
