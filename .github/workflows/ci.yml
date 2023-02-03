@@ -73,6 +73,7 @@ jobs:
         run: composer update --no-interaction --no-progress --ansi
       - name: Preparing database
         run: |
+          bin/console lexik:jwt:generate-keypair
           bin/console doctrine:database:create
           bin/console doctrine:schema:create
       - name: Run Behat tests
