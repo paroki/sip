@@ -1,0 +1,55 @@
+security:
+  password_hashers:
+    Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: "auto"
+
+  providers:
+    users:
+      entity:
+        class: SIP\Security\Entity\User
+        property: email
+
+  firewalls:
+    dev:
+      pattern: ^/(_(profiler|wdt)|css|images|js|docs|contexts)/
+      security: false
+    api:
+      stateless: true
+      provider: users
+      entry_point: jwt
+      json_login:
+        check_path: auth_login # The name in routes.yaml is enough for mapping
+        username_path: email
+        password_path: password
+        success_handler: lexik_jwt_authentication.handler.authentication_success
+        failure_handler: lexik_jwt_authentication.handler.authentication_failure
+      jwt: ~
+      refresh_jwt:
+        check_path: auth_refresh_token
+      logout:
+        path: auth_logout
+
+  access_control:
+    - { path: ^/api/docs, roles: PUBLIC_ACCESS }
+    #- { path: ^/fetch.jsonld, roles: PUBLIC_ACCESS }
+    - { path: ^/auth/(login|refresh-token|logout), roles: PUBLIC_ACCESS }
+    - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+    - { path: ^/, roles: PUBLIC_ACCESS }
+
+  role_hierarchy:
+    ROLE_SUPER_ADMIN: [ROLE_KEUSKUPAN_ADMIN, ROLE_PAROKI_ADMIN]
+    ROLE_KEUSKUPAN_ADMIN: [ROLE_KEUSKUPAN_USER, ROLE_ADMIN]
+    ROLE_KEUSKUPAN_USER: ROLE_USER
+    ROLE_PAROKI_ADMIN: [ROLE_PAROKI_USER, ROLE_ADMIN]
+    ROLE_PAROKI_USER: ROLE_USER
+
+when@test:
+  security:
+    password_hashers:
+      # By default, password hashers are resource intensive and take time. This is
+      # important to generate secure password hashes. In tests however, secure hashes
+      # are not important, waste resources and increase test times. The following
+      # reduces the work factor to the lowest possible values.
+      Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+        algorithm: md5
+        encode_as_base64: false
+        iterations: 0

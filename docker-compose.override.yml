@@ -1,72 +1,9 @@
-version: "3.4"
+version: '3'
 
-# Development environment override
 services:
-  api:
-    build:
-      target: app_php_dev
-    volumes:
-      - ./api:/srv/app
-      - ./api/docker/php/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
-      # If you develop on Mac or Windows you can remove the vendor/ directory 
-      #  from the bind-mount for better performance by enabling the next line:
-      #- /srv/app/vendor
-    environment:
-      # See https://xdebug.org/docs/all_settings#mode 
-      XDEBUG_MODE: "${XDEBUG_MODE:-off}"
-      GID: ${GID:-1000}
-      UID: ${UID:-1000}
-    extra_hosts:
-      # Ensure that host.docker.internal is correctly defined on Linux
-      - host.docker.internal:host-gateway
-    ports:
-    - 9003
-    - 9000
-
-  pwa:
-    build:
-      context: ./pwa
-      target: dev 
-    volumes:
-      - ./pwa:/srv/app
-    environment:
-      API_PLATFORM_CREATE_CLIENT_ENTRYPOINT: http://caddy
-      API_PLATFORM_CREATE_CLIENT_OUTPUT: .
-      # On Linux, you may want to comment the following line for improved performance
-      WATCHPACK_POLLING: true
-    ports:
-      - '3001:3001'
-
-  caddy:
-    volumes:
-      - ./api/public:/srv/app/public:ro
-      - ./api/docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-    environment:
-      MERCURE_EXTRA_DIRECTIVES: demo
-
-  pgadmin:
-    container_name: sip.pgadmin
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: 'siap@example.com'
-      PGADMIN_DEFAULT_PASSWORD: 'siap'
-    ports:
-      - '1080:80'
-  
-  #chrome:
-  #  container_name: sip.chrome
-  #  build:
-  #    context: ./api/docker/chrome
-  #  ports:
-  #    - 9222:9222
-
 ###> doctrine/doctrine-bundle ###
   database:
     ports:
-      - target: 5432
-        published: 5432
-        protocol: tcp
+      - "5432"
 ###< doctrine/doctrine-bundle ###
 
-###> symfony/mercure-bundle ###
-###< symfony/mercure-bundle ###

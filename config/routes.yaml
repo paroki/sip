@@ -1,0 +1,20 @@
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing-sf4.xml"
+
+auth_login:
+    path: /auth/login
+    methods: ['POST']
+    options:
+        expose: true
+
+auth_refresh_token:
+    path: /auth/refresh-token
+
+auth_logout:
+    path: /auth/logout
+
+security_controller:
+    resource:
+        path: ../src/Security/Controller/
+        namespace: SIP\Security\Controller
+    type: attribute

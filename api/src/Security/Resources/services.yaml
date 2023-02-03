@@ -1,3 +1,0 @@
-#services:
-#    user.active_filter:
-#        parent: api_platform.action.delete_item
