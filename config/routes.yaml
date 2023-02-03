@@ -18,3 +18,9 @@ security_controller:
         path: ../src/Security/Controller/
         namespace: SIP\Security\Controller
     type: attribute
+
+core_controller:
+    resource:
+        path: ../src/Core/Controller/
+        namespace: SIP\Core\Controller
+    type: attribute
