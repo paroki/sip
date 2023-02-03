@@ -42,12 +42,12 @@ class JWTEventSubscriber implements EventSubscriberInterface
 
         if (isset($data['token'])) {
             /** @var User $user */
-            $user              = $event->getUser();
-            $response          = $event->getResponse();
-            $data              = json_decode($response->getContent(), true);
-            $data              = array_merge($data, $this->profileGenerator->getProfileData($user));
-            $cookies           = $response->headers->getCookies();
-            $expires           = $cookies[1]->getExpiresTime();
+            $user = $event->getUser();
+            $response = $event->getResponse();
+            $data = json_decode($response->getContent(), true);
+            $data = array_merge($data, $this->profileGenerator->getProfileData($user));
+            $cookies = $response->headers->getCookies();
+            $expires = $cookies[1]->getExpiresTime();
             $data['expiresAt'] = date_timestamp_set(
                 new \DateTime(),
                 $cookies[0]->getExpiresTime())

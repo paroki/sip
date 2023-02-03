@@ -49,11 +49,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[UniqueEntity('email', message: 'Alamat email sudah digunakan.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    public const ROLE_SUPER_ADMIN     = 'ROLE_SUPER_ADMIN';
+    public const ROLE_SUPER_ADMIN = 'ROLE_SUPER_ADMIN';
     public const ROLE_KEUSKUPAN_ADMIN = 'ROLE_KEUSKUPAN_ADMIN';
-    public const ROLE_KEUSKUPAN_USER  = 'ROLE_KEUSKUPAN_USER';
-    public const ROLE_PAROKI_ADMIN    = 'ROLE_PAROKI_ADMIN';
-    public const ROLE_PAROKI_USER     = 'ROLE_PAROKI_USER';
+    public const ROLE_KEUSKUPAN_USER = 'ROLE_KEUSKUPAN_USER';
+    public const ROLE_PAROKI_ADMIN = 'ROLE_PAROKI_ADMIN';
+    public const ROLE_PAROKI_USER = 'ROLE_PAROKI_USER';
 
     public const ROLE_ADMIN = 'ROLE_ADMIN';
 

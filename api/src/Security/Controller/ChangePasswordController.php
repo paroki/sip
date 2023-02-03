@@ -38,16 +38,16 @@ class ChangePasswordController
         #[CurrentUser]
         User $currentUser
     ): JsonResponse {
-        $content            = $request->getContent();
-        $data               = json_decode($content);
-        $userRepository     = $this->userRepository;
-        $password           = $data->password;
-        $passwordConfirm    = $data->passwordConfirm;
-        $user               = null;
+        $content = $request->getContent();
+        $data = json_decode($content);
+        $userRepository = $this->userRepository;
+        $password = $data->password;
+        $passwordConfirm = $data->passwordConfirm;
+        $user = null;
 
         if (property_exists($data, 'id')) {
-            $id                 = $data->id;
-            $user               = $userRepository->find($id);
+            $id = $data->id;
+            $user = $userRepository->find($id);
         }
 
         if ($password !== $passwordConfirm) {

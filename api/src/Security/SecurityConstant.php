@@ -13,7 +13,7 @@ namespace SIP\Security;
 
 class SecurityConstant
 {
-    public const BEARER_COOKIE  = 'BEARER';
+    public const BEARER_COOKIE = 'BEARER';
     public const PROFILE_COOKIE = 'PROFILE';
 
     public const EVENT_GET_PROFILE = 'GET_PROFILE';

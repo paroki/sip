@@ -40,10 +40,10 @@ class ResourceContext implements Context
         UrlGeneratorInterface $urlGenerator,
         EntityManagerInterface $em
     ) {
-        $this->urlGenerator         = $urlGenerator;
-        $this->iriConverter         = $iriConverter;
+        $this->urlGenerator = $urlGenerator;
+        $this->iriConverter = $iriConverter;
         $this->segmentNameGenerator = $segmentNameGenerator;
-        $this->em                   = $em;
+        $this->em = $em;
 
         $this->resourceMaps = $this->generateResourceMaps();
     }
@@ -57,7 +57,7 @@ class ResourceContext implements Context
         string $value
     ): void {
         $repo = $this->getRepository($resource);
-        $ob   = $repo->findOneBy([$filter => $value]);
+        $ob = $repo->findOneBy([$filter => $value]);
         if (\is_object($ob)) {
             $this->em->remove($ob);
             $this->em->flush();
@@ -77,9 +77,9 @@ class ResourceContext implements Context
     public function iHaveResource(string $name, array $data): object
     {
         $class = $this->getResourceClass($name);
-        $ob    = $this->updateResource($class, $data);
+        $ob = $this->updateResource($class, $data);
 
-        $this->currentResource         = $ob;
+        $this->currentResource = $ob;
         $this->createdResources[$name] = $ob;
 
         return $ob;
@@ -100,19 +100,19 @@ class ResourceContext implements Context
     /**
      * @Given I send a :method request to :resource with:
      */
-    public function iSendRequestTo($method, string $resource, ?PyStringNode $body=null)
+    public function iSendRequestTo($method, string $resource, ?PyStringNode $body = null)
     {
-        $url  = '/'.$resource;
+        $url = '/'.$resource;
         $rest = $this->restContext;
         if (null !== $body) {
             $body = $this->patchData($body);
         }
 
         if ('/' !== substr($resource, 0)) {
-            $class   = $this->getResourceClass($resource);
-            $r       = new \ReflectionClass($class);
+            $class = $this->getResourceClass($resource);
+            $r = new \ReflectionClass($class);
             $segment = $this->segmentNameGenerator->getSegmentName($r->getShortName());
-            $url     = $this->urlGenerator->generate('_api_/'.$segment.'{._format}_post');
+            $url = $this->urlGenerator->generate('_api_/'.$segment.'{._format}_post');
         }
         $rest->iAddHeaderEqualTo('Content-Type', 'application/json');
         $rest->iAddHeaderEqualTo('Accept', 'application/json');
@@ -128,12 +128,12 @@ class ResourceContext implements Context
 
     public function updateResource(mixed $class, mixed $json): object
     {
-        $em      = $this->em;
-        $repo    = $em->getRepository($class);
+        $em = $this->em;
+        $repo = $em->getRepository($class);
         $filters = \array_slice($json, 0, 1);
-        $ob      = $this->findResource($class, $filters);
+        $ob = $this->findResource($class, $filters);
 
-        if ( ! \is_object($ob)) {
+        if (!\is_object($ob)) {
             $ob = new $class();
         }
         foreach ($json as $name => $value) {
@@ -177,14 +177,14 @@ class ResourceContext implements Context
 
     private function generateResourceMaps(): array
     {
-        $classes              = $this->em->getConfiguration()->getMetadataDriverImpl()->getAllClassNames();
+        $classes = $this->em->getConfiguration()->getMetadataDriverImpl()->getAllClassNames();
         $segmentNameGenerator = $this->segmentNameGenerator;
-        $overrides            = include __DIR__.'/Resources/resource_maps_override.php';
-        $maps                 = [];
+        $overrides = include __DIR__.'/Resources/resource_maps_override.php';
+        $maps = [];
 
         foreach ($classes as $class) {
-            $r                  = new \ReflectionClass($class);
-            $segmentName        = $segmentNameGenerator->getSegmentName($r->getShortName());
+            $r = new \ReflectionClass($class);
+            $segmentName = $segmentNameGenerator->getSegmentName($r->getShortName());
             $maps[$segmentName] = $class;
         }
 
@@ -196,9 +196,9 @@ class ResourceContext implements Context
         foreach ($this->createdResources as $name => $resource) {
             $method = 'getId';
             if (method_exists($resource, $method)) {
-                $id     = \call_user_func([$resource, $method]);
+                $id = \call_user_func([$resource, $method]);
                 $search = "{$name}.id";
-                $data   = str_replace($search, "api/$name/$id", $data);
+                $data = str_replace($search, "api/$name/$id", $data);
             }
         }
 

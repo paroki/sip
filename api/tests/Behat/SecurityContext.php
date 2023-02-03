@@ -13,12 +13,13 @@ namespace SIP\Tests\Behat;
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
+
+use function PHPUnit\Framework\assertNotNull;
+
 use SIP\Security\Entity\User;
 use SIP\Security\SecurityConstant;
 use SIP\Tests\Behat\Concerns\ResourceContext;
 use SIP\Tests\Behat\Concerns\Rest;
-
-use function PHPUnit\Framework\assertNotNull;
 
 class SecurityContext implements Context
 {
@@ -64,8 +65,8 @@ class SecurityContext implements Context
     public function iHaveSignedInAsAdmin()
     {
         $this->iHaveUser(
-            $email    ='sip@example.com',
-            $password ='sip',
+            $email = 'sip@example.com',
+            $password = 'sip',
             [User::ROLE_SUPER_ADMIN]
         );
         $this->iSignInWithEmailAndPassword($email, $password);
@@ -77,8 +78,8 @@ class SecurityContext implements Context
     public function iHaveSignedIn()
     {
         $this->iHaveUser(
-            $email    ='test@example.com',
-            $password ='test',
+            $email = 'test@example.com',
+            $password = 'test',
             [User::ROLE_USER]
         );
         $this->iSignInWithEmailAndPassword($email, $password);

@@ -70,7 +70,7 @@ final class KeuskupanFixture
         foreach ($records as $record) {
             $keuskupan = $this->em->getRepository(Keuskupan::class)
                 ->findOneBy(['kode' => $record[0]]);
-            if ( ! \is_object($keuskupan)) {
+            if (!\is_object($keuskupan)) {
                 $keuskupan = new Keuskupan();
             }
 
@@ -85,7 +85,7 @@ final class KeuskupanFixture
         foreach ($records as $record) {
             $paroki = $this->em->getRepository(Paroki::class)
                 ->findOneBy(['kode' => $record[0]]);
-            if ( ! \is_object($paroki)) {
+            if (!\is_object($paroki)) {
                 $paroki = new Paroki();
             }
 
@@ -99,7 +99,7 @@ final class KeuskupanFixture
     private function loadRecords(string $file): TabularDataReader
     {
         $reader = Reader::createFromPath($file);
-        $stmt   = Statement::create()->offset(1);
+        $stmt = Statement::create()->offset(1);
 
         return $stmt->process($reader);
     }
@@ -108,8 +108,8 @@ final class KeuskupanFixture
     {
         foreach ($map as $index => $prop) {
             $current = \call_user_func([$resource, 'get'.$prop]);
-            $data    = str_replace('"', '', $record[$index]);
-            if ( ! \is_object($current)) {
+            $data = str_replace('"', '', $record[$index]);
+            if (!\is_object($current)) {
                 \call_user_func([$resource, 'set'.$prop], $data);
             }
         }

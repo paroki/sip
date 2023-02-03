@@ -24,13 +24,13 @@ final class UserPasswordHasher implements ProcessorInterface
 
     public function __construct(ProcessorInterface $processor, UserPasswordHasherInterface $passwordHasher)
     {
-        $this->processor      = $processor;
+        $this->processor = $processor;
         $this->passwordHasher = $passwordHasher;
     }
 
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
-        if ( ! $data->getPlainPassword()) {
+        if (!$data->getPlainPassword()) {
             return $this->processor->process($data, $operation, $uriVariables, $context);
         }
 
