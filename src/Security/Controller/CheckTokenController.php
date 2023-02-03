@@ -23,8 +23,7 @@ class CheckTokenController
     #[Route(path: '/auth/check', name: 'auth_check_token', methods: 'GET')]
     public function checkToken(
       #[CurrentUser] User $user
-    ): JsonResponse
-    {
+    ): JsonResponse {
         /* @var \SIP\Security\Entity\User $user */
         return new JsonResponse([
             'id' => $user->getId(),

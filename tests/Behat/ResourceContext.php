@@ -20,7 +20,6 @@ use Doctrine\ORM\EntityRepository;
 use SIP\Core\SingularPathSegmentNameGenerator;
 use SIP\Security\Repository\UserRepository;
 use SIP\Tests\Behat\Concerns\Rest;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class ResourceContext implements Context
 {
