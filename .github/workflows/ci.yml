@@ -21,6 +21,9 @@ jobs:
         php:
           - "8.1"
       fail-fast: false
+    defaults:
+      run:
+        working-directory: ./api
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -47,6 +50,9 @@ jobs:
     env:
       APP_DEBUG: '1' # https://github.com/phpstan/phpstan-symfony/issues/37
       SYMFONY_PHPUNIT_VERSION: '9.5'
+    defaults:
+      run:
+        working-directory: ./api
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -100,6 +106,9 @@ jobs:
           - php: "8.2"
             coverage: true
       fail-fast: false
+    defaults:
+      run:
+        working-directory: ./api
     steps:
       - name: Checkout
         uses: actions/checkout@v3
