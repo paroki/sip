@@ -69,8 +69,6 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
       - name: Update project dependencies
         run: composer update --no-interaction --no-progress --ansi
-      - name: Install PHPUnit
-        run: vendor/bin/simple-phpunit --version
       - name: Cache PHPStan results
         uses: actions/cache@v2
         with:
@@ -80,10 +78,6 @@ jobs:
             phpstan-php${{ matrix.php }}-
             phpstan-
         continue-on-error: true
-      - name: Clear test app cache
-        run: |
-          rm -Rf tests/Fixtures/app/var/cache/*
-          tests/Fixtures/app/console cache:warmup
       - name: Run PHPStan analysis
         env:
           SYMFONY_PHPUNIT_VERSION: '9.5'
