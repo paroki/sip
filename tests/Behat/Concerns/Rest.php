@@ -14,6 +14,7 @@ namespace SIP\Tests\Behat\Concerns;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\MinkExtension\Context\MinkContext;
 use Behatch\Context\RestContext;
+use Behat\Behat\Context\Environment\ContextEnvironment;
 
 trait Rest
 {

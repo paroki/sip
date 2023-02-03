@@ -1,8 +1,8 @@
 parameters:
-	level: 5
-	paths:
-		- src
-		- tests
-	inferPrivatePropertyTypeFromConstructor: true
-	symfony:
-		constantHassers: false
+  level: 5
+  paths:
+    - src
+    - tests
+  inferPrivatePropertyTypeFromConstructor: true
+  ignoreErrors:
+    - '#Call to an undefined method Behat\\Testwork\\Environment\\Environment::getContext#'

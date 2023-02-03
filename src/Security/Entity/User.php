@@ -20,6 +20,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use SIP\Security\Controller\DeleteController;
 use SIP\Security\Repository\UserRepository;
 use SIP\Security\UserPasswordHasher;
+use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -60,7 +61,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
-    #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
+    #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[Groups(['user:read'])]
     private ?string $id = null;

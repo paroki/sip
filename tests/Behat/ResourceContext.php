@@ -39,9 +39,7 @@ class ResourceContext implements Context
         SingularPathSegmentNameGenerator $segmentNameGenerator,
         IriConverterInterface $iriConverter,
         UrlGeneratorInterface $urlGenerator,
-
-        EntityManagerInterface $em,
-        UserPasswordHasherInterface $hasher
+        EntityManagerInterface $em
     ) {
         $this->urlGenerator         = $urlGenerator;
         $this->iriConverter         = $iriConverter;

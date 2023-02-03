@@ -26,14 +26,6 @@ class SecurityContext implements Context
     use ResourceContext;
     use Rest;
 
-    private JWTEncoderInterface $jwtEncoder;
-
-    public function __construct(
-        JWTEncoderInterface $jwtEncoder
-    ) {
-        $this->jwtEncoder = $jwtEncoder;
-    }
-
     /**
      * @Given I sign in with :email and password :password
      * @Given I have signed in with email :email and password :password
