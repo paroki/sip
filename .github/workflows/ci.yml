@@ -172,7 +172,7 @@ jobs:
         if: matrix.coverage
         uses: codecov/codecov-action@v3
         with:
-          directory: build/logs/behat
+          directory: sip/build/logs/behat
           name: behat-php${{ matrix.php }}
           flags: behat
           fail_ci_if_error: true
