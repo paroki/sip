@@ -6,6 +6,7 @@ services:
     build:
       context: ./api
       target: app_php
+      dockerfile: Dockerfile
     depends_on:
       - database
     restart: unless-stopped
@@ -35,10 +36,11 @@ services:
   caddy:
     container_name: sip.caddy
     build:
-      context: api/
+      context: ./api
+      dockerfile: Dockerfile
       target: app_caddy
     depends_on:
-      - php
+      - api
       - pwa
     environment:
       PWA_UPSTREAM: pwa:3000

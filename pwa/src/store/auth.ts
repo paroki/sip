@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import { useLocalStorage } from '@vueuse/core'
-import { ApiResponseError } from '@doyolabs/api-client-core'
+import { type ApiResponseError, useApiClient } from '@doyolabs/api-client-core'
 import dayjs from 'dayjs'
+import type { AssociativeArray } from '@/types'
 
 export interface AuthProfile {
   id?: string
@@ -41,13 +42,44 @@ export const useAuthStore = defineStore('auth', {
     expired: ({ profile }) => {
       if (!profile?.expiresAt) return true
 
-      const expiry = dayjs(profile.expiresAt).subtract(5, 'minute')
+      const expiresAt = dayjs(profile.expiresAt)
+      const duration = expiresAt.diff(dayjs(), 'minutes')
 
-      console.log(expiry.diff(dayjs(), 'minute'))
-      return expiry.isBefore(dayjs())
+      return duration <= 5
     },
     refreshTokenExpired: ({ profile }) => {
       if (!profile?.refreshExpiresAt) return true
+
+      const refreshExpiresAt = dayjs(profile.refreshExpiresAt)
+      const duration = refreshExpiresAt.diff(dayjs(), 'days')
+
+      return duration <= 1
+    },
+  },
+  actions: {
+    async login(payload: AssociativeArray<string>) {
+      const api = useApiClient()
+
+      const { data, error } = await api<AuthProfile>('/auth/login', {
+        method: 'POST',
+        payload,
+      })
+      this.profile = data
+      this.error = error
+    },
+    async logout() {
+      const api = useApiClient()
+
+      const { error } = await api<AuthProfile>('/auth/logout')
+      this.error = error
+      this.profile = useInitialAuthProfile()
+    },
+    async refreshToken() {
+      const api = useApiClient()
+
+      const { data, error } = await api<AuthProfile>('/auth/refresh-token')
+      this.error = error
+      this.profile = data
     },
   },
 })
