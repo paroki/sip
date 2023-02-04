@@ -2,7 +2,7 @@ version: "3.4"
 
 # Development environment override
 services:
-  php:
+  api:
     build:
       target: app_php_dev
     volumes:
@@ -29,6 +29,9 @@ services:
       API_PLATFORM_CREATE_CLIENT_OUTPUT: .
       # On Linux, you may want to comment the following line for improved performance
       WATCHPACK_POLLING: true
+    ports:
+      - 5173:5173
+      - 3001:3001
 
   caddy:
     volumes:

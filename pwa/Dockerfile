@@ -30,8 +30,8 @@ RUN pnpm install -r --offline
 # Development image
 FROM deps as dev
 
-EXPOSE 3000
-ENV PORT 3000
+EXPOSE 5173
+ENV PORT 5173
 
 CMD ["sh", "-c", "pnpm install -r --offline; pnpm dev"]
 
