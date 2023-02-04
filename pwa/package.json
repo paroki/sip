@@ -16,6 +16,7 @@
     "@doyolabs/api-client-core": "^0.0.3",
     "@doyolabs/api-client-pinia": "^0.0.3",
     "@mdi/font": "^7.1.96",
+    "@vitejs/plugin-basic-ssl": "^1.0.1",
     "@vueuse/core": "^9.12.0",
     "dayjs": "^1.11.7",
     "fos-router": "link:../api/vendor/friendsofsymfony/jsrouting-bundle/Resources",

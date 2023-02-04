@@ -8,7 +8,11 @@ defineProps<{
 </script>
 <template>
   <v-alert prominent type="error" variant="outlined">
-    <template v-if="error?.data">
+    <template v-if="error.data['hydra:title']">
+      <v-alert-title>{{ error.data['hydra:title'] }}</v-alert-title>
+      {{  error.data['hydra:description'] }}
+    </template>
+    <template v-else-if="error?.data?.message">
       {{ error.data.message }}
     </template>
     <template v-else>
